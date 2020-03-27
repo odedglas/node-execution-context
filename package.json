@@ -1,14 +1,14 @@
 {
-  "name": "linear-gradient-parser",
-  "version": "1.1.5",
-  "description": "Parses a SVG linear gradient string / parsed JSON into css background image property",
+  "name": "node-execution-context",
+  "version": "1.0.0",
+  "description": "Provides execution context wrapper for node JS, can be used to create execution wrapper for handling requests and more",
   "author": "Oded Goldglas <odedglas@gmail.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/odedglas/linear-gradient-parser"
+    "url": "https://github.com/odedglas/node-execution-context"
   },
-  "homepage": "https://github.com/odedglas/linear-gradient-parser",
+  "homepage": "https://github.com/odedglas/node-execution-context",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest -c configuration/jest.config.js",
@@ -16,9 +16,10 @@
     "build": "webpack --config configuration/webpack.config"
   },
   "keywords": [
-    "svg",
-    "linear-greadient",
-    "background-image"
+    "node",
+    "context",
+    "execution-context",
+    "async-hooks"
   ],
   "devDependencies": {
     "@babel/cli": "^7.1.5",
