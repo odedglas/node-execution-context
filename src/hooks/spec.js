@@ -1,5 +1,5 @@
 const asyncHooks = require('async_hooks');
-const createHooks = require('.');
+const { create: createHooks } = require('.');
 
 describe('Context / Hooks', () => {
     const triggerAsyncId = asyncHooks.executionAsyncId();

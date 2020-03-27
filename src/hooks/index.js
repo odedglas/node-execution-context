@@ -109,4 +109,4 @@ const create = (executionContextMap) => ({
     promiseResolve: destroy(executionContextMap)
 });
 
-module.exports = create;
+module.exports = { create };
