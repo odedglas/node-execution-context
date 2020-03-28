@@ -1,10 +1,10 @@
 const path = require('path');
-const { isProduction, PRODUCTION} = require('../src/lib');
+const { env, isProduction } = require('../src/lib');
 
 const root = path.resolve(__dirname, '..');
 
 module.exports = {
-    mode: process.env.NODE_ENV || PRODUCTION,
+    mode: env,
     devtool: 'source-map',
     entry: path.join(root, 'index.js'),
     target: 'node',

@@ -4,8 +4,10 @@
  */
 const PRODUCTION = 'production';
 
+const env = process.env.NODE_ENV || PRODUCTION;
+
 module.exports = {
-    PRODUCTION,
-    isProduction: () => process.env.NODE_ENV || PRODUCTION,
+    env,
+    isProduction: (environment = env) => environment === PRODUCTION,
     isUndefined: (thing) => [null, undefined].includes(thing)
 };
