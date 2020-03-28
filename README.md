@@ -83,7 +83,7 @@ Context.create({
 });
 
 Promise.resolve().then(() => {
-    console.log(Context.get()) // outputs: {"value": true}
+    console.log(Context.get()); // outputs: {"value": true}
     
     Context.update({
         value: false
@@ -91,19 +91,20 @@ Promise.resolve().then(() => {
     
     return new Promise((resolve) => {
         setTimeout(() => {
-            console.log(Context.get()) // outputs: {"value": false}
+            console.log(Context.get()); // outputs: {"value": false}
             
             Context.update({
                 butter: 'fly'
             });
             
             process.nextTick(() => {
-                console.log(Context.get()) // outputs: {"value": false, "butter": 'fly'}
+                console.log(Context.get()); // outputs: {"value": false, "butter": 'fly'}
+                resolve();
             });
             
         }, 1000);
         
-        console.log(Context.get()) // outputs: {"value": true}
+        console.log(Context.get()); // outputs: {"value": true}
     });
 });
 ```
