@@ -1,4 +1,5 @@
 const asyncHooks = require('async_hooks');
+const { isProduction } = require('./lib');
 const { create: createHooks } = require('./hooks');
 const { ExecutionContextErrors } = require('./constants');
 
@@ -14,6 +15,18 @@ asyncHooks.createHook(
 ).enable();
 
 /**
+ * Handles execution context error, throws when none production
+ * @param code
+ */
+const handleError = (code) => {
+    if (!isProduction()) {
+        throw code;
+    }
+
+    console.warn(code);
+};
+
+/**
  * The Execution Context API
  */
 const Context = {
@@ -27,7 +40,7 @@ const Context = {
         const asyncId = asyncHooks.executionAsyncId();
 
         // Creation is allowed once per execution context
-        if (executionContextMap.has(asyncId)) throw ExecutionContextErrors.CONTEXT_ALREADY_DECLARED;
+        if (executionContextMap.has(asyncId)) handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
 
         executionContextMap.set(asyncId, {
             context: { ...initialContext, executionId: asyncId },
@@ -42,7 +55,7 @@ const Context = {
     update: (update = {}) => {
         const asyncId = asyncHooks.executionAsyncId();
 
-        if (!executionContextMap.has(asyncId)) throw ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS;
+        if (!executionContextMap.has(asyncId)) handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
         const contextData = executionContextMap.get(asyncId);
 
@@ -60,7 +73,7 @@ const Context = {
      */
     get: () => {
         const asyncId = asyncHooks.executionAsyncId();
-        if (!executionContextMap.has(asyncId)) throw ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS;
+        if (!executionContextMap.has(asyncId)) handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
         const { context = {}, ref } = executionContextMap.get(asyncId);
         if (ref) {
