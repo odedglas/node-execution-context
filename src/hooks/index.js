@@ -1,6 +1,5 @@
+const { isUndefined } = require('../lib');
 const { EXCLUDED_ASYNC_TYPES } = require('./constants');
-
-const isUndefined = (thing) => [null, undefined].includes(thing);
 
 /**
  * Returns proper context ref for a given trigger id.

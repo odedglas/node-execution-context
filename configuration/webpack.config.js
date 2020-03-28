@@ -1,12 +1,10 @@
 const path = require('path');
-const PRODUCTION = 'production';
+const { isProduction, PRODUCTION} = require('../src/lib');
 
 const root = path.resolve(__dirname, '..');
-const environment = process.env.NODE_ENV || PRODUCTION;
-const isProduction = environment === PRODUCTION;
 
 module.exports = {
-    mode: environment,
+    mode: process.env.NODE_ENV || PRODUCTION,
     devtool: 'source-map',
     entry: path.join(root, 'index.js'),
     target: 'node',
@@ -30,7 +28,7 @@ module.exports = {
         minimize: false
     },
     performance: {
-        hints: isProduction ? 'warning' : false
+        hints: isProduction() ? 'warning' : false
     },
     resolve: {
         extensions: ['.js', '.json']
