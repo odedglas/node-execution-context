@@ -21,6 +21,10 @@
     "execution-context",
     "async-hooks"
   ],
+  "engines": {
+    "node": ">=8.6.0"
+  },
+  "engineStrict": true,
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.5",

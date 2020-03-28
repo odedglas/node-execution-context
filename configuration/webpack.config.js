@@ -1,6 +1,4 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-
 const PRODUCTION = 'production';
 
 const root = path.resolve(__dirname, '..');
@@ -11,6 +9,7 @@ module.exports = {
     mode: environment,
     devtool: 'source-map',
     entry: path.join(root, 'index.js'),
+    target: 'node',
     output: {
         filename: 'index.js',
         path: path.join(root, 'dist'),
@@ -28,16 +27,7 @@ module.exports = {
         ]
     },
     optimization: {
-        minimize: isProduction,
-        minimizer: [
-            new UglifyJsPlugin({
-                sourceMap: true,
-                uglifyOptions: {
-                    compress: {},
-                    mangle: true
-                }
-            })
-        ]
+        minimize: false
     },
     performance: {
         hints: isProduction ? 'warning' : false
