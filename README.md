@@ -14,18 +14,21 @@ Let't start with creating the context initialisation point of our app, well take
 ```js
 // main.js
 
-const Context = require('node-execution-context');
 const express = require('express');
+const {  AsyncResource  } = require('async_hooks');
+const Context = require('node-execution-context');
 const UserController = require('./controllers/user');
 const app = express();
 const port = 3000;
 
 const ContextMiddleware = (req, res, next) => {
-    Context.create({
-        reference: req.body.reference    
-    });
-
-    next();
+	const requestResource = new AsyncResource('REQUEST_CONTEXT');
+	requestResource.runInAsyncScope(() => {
+		Context.create({
+			val: true
+		});
+		next();
+	});
 };
 
 app.use('/', ContextMiddleware);
