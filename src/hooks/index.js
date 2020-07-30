@@ -11,7 +11,7 @@ const getContextRef = (parentContext, triggerAsyncId) => (
 );
 
 /**
- * Suspends a given function execution over process next tick.
+ * Suspends a given f   unction execution over process next tick.
  * @param {Function} fn - The function to trigger upon next tick.
  * @param {...any} args - The function arguments to trigger with.
  * @return {any}

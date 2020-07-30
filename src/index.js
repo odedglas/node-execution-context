@@ -1,4 +1,5 @@
 const asyncHooks = require('async_hooks');
+const ExecutionContextResource = require('./lib/ExecutionContextResource')
 const { isProduction } = require('./lib');
 const { create: createHooks } = require('./hooks');
 const { ExecutionContextErrors } = require('./constants');
@@ -32,7 +33,7 @@ const createExecutionContext = () => {
         createHooks(executionContextMap)
     ).enable();
 
-    return {
+    const Context = {
 
         /**
          * Creates an execution context for the current asyncId process.
@@ -41,7 +42,7 @@ const createExecutionContext = () => {
          * @returns void
          */
         create: (initialContext = {}) => {
-            console.log('Creating execution context : ', executionContextMap);
+            console.log('Ceating: ', executionContextMap);
             const asyncId = asyncHooks.executionAsyncId();
 
             // Creation is allowed once per execution context
@@ -90,8 +91,25 @@ const createExecutionContext = () => {
 
             // Root context
             return context;
+        },
+
+        /**
+         * Runs a given function within "AsyncResource" context, this will ensure the function executed within a uniq execution context.
+         * @param {Function} fn - The function to run.
+         * @param {Object} initialContext - The initial context to expose to the function execution
+         */
+        run: (fn, initialContext) => {
+            const resource = new ExecutionContextResource();
+
+            resource.runInAsyncScope(() => {
+                Context.create(initialContext);
+
+                fn();
+            });
         }
     };
+
+    return Context;
 }
 
 global.ExecutionContext = global.ExecutionContext || createExecutionContext();
