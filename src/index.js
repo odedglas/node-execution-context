@@ -42,7 +42,6 @@ const createExecutionContext = () => {
          * @returns void
          */
         create: (initialContext = {}) => {
-            console.log('Ceating: ', executionContextMap);
             const asyncId = asyncHooks.executionAsyncId();
 
             // Creation is allowed once per execution context
