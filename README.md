@@ -22,13 +22,7 @@ const app = express();
 const port = 3000;
 
 const ContextMiddleware = (req, res, next) => {
-	const requestResource = new AsyncResource('REQUEST_CONTEXT');
-	requestResource.runInAsyncScope(() => {
-		Context.create({
-			val: true
-		});
-		next();
-	});
+    Context.run(next, { val: true });
 };
 
 app.use('/', ContextMiddleware);
