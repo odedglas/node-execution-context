@@ -15,7 +15,7 @@ Let't start with creating the context initialisation point of our app, well take
 // main.js
 
 const express = require('express');
-const {  AsyncResource  } = require('async_hooks');
+const { AsyncResource } = require('async_hooks');
 const Context = require('node-execution-context');
 const UserController = require('./controllers/user');
 const app = express();
@@ -42,7 +42,7 @@ const mongo = require('../service/mongo');
 const logger = require('../service/logger');
 
 export class UserController {
-    async create (req, res, next) {
+    async create (req) {
         const { user } = req.body;
         
         // This will return the reference number set by out ContextMiddleware
