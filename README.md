@@ -63,11 +63,16 @@ Creates for the current async resource an execution context entry identified wit
 Any future processes that will be added to the async execution chain will be exposed to this context.
 
 ### update(update: object)
+
 Updates the current execution context with a given update obect.
 
 ### get()
 
 Returns the current execution context identified with the current asyncId.
+
+### run(fn: Function, initialContext: object)
+
+Runs a given function under a dedicated AsyncResource, exposing given initial context to the process and it's child processes.
 
 ### API Usage
 
