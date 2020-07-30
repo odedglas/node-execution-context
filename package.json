@@ -1,6 +1,6 @@
 {
   "name": "node-execution-context",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Provides execution context wrapper for node JS, can be used to create execution wrapper for handling requests and more",
   "author": "Oded Goldglas <odedglas@gmail.com>",
   "license": "ISC",
