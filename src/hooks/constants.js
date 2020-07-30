@@ -4,4 +4,10 @@
  * We can skip those types assuming the execution context won't be used for process types.
  * @type {Set<String>}
  */
-exports.EXCLUDED_ASYNC_TYPES  = new Set(['DNSCHANNEL', 'TLSWRAP', 'TCPWRAP', 'HTTPPARSER']);
+exports.EXCLUDED_ASYNC_TYPES  = new Set([
+    'DNSCHANNEL',
+    'TLSWRAP',
+    'TCPWRAP',
+    'HTTPPARSER',
+    'ZLIB'
+]);

@@ -11,13 +11,12 @@ const getContextRef = (parentContext, triggerAsyncId) => (
 );
 
 /**
- * Suspends map entry removal using next tick queue
- * @param {ExecutionContextMap} map - The execution context map
- * @param {Number} id - The async id to remove
+ * Suspends a given function execution over process next tick.
+ * @param {Function} fn - The function to trigger upon next tick.
+ * @param {...any} args - The function arguments to trigger with.
+ * @return {any}
  */
-const suspendedDelete = (map, id) => process.nextTick(
-    () => map.delete(id)
-);
+const suspend = (fn, ...args) => process.nextTick(() => fn(...args));
 
 /**
  * The "async_hooks" init hook callback, used to initialize sub process of the main context
@@ -59,7 +58,7 @@ const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
 
     // Parent context will be released upon last child removal
     if (!children.length) {
-        suspendedDelete(executionContextMap, ref);
+        executionContextMap.delete(ref)
 
         return;
     }
@@ -85,14 +84,14 @@ const destroy = (executionContextMap) => (asyncId)=> {
 
     // Child context's will unregister themselves from root context
     if (!isUndefined(ref)) {
-        onChildProcessDestroy(
+        suspend(
+            onChildProcessDestroy,
             executionContextMap,
             asyncId,
-            ref,
+            ref
         );
     }
-
-    suspendedDelete(executionContextMap, asyncId);
+    executionContextMap.delete(asyncId);
 };
 
 
