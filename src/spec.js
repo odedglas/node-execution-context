@@ -100,6 +100,42 @@ describe('Context', () => {
                 });
             });
         });
+
+        describe('Run', () => {
+            let spies;
+            let execute;
+            const initialContext = { initial: 'value' };
+
+            beforeEach(() => {
+                execute = jest.fn();
+                spies = {
+                    contextCreate: jest.spyOn(Context, 'create'),
+                    execute
+                };
+
+                Context.run(execute, initialContext);
+            });
+
+            it('Creates context', () => {
+                expect(spies.contextCreate).toHaveBeenCalledWith(initialContext);
+            });
+
+            it('Executes given function', () => {
+                expect(spies.execute).toHaveBeenCalledTimes(1);
+            });
+
+            it('Expose context to function execution', () => {
+                let exposedContext = undefined;
+                execute = jest.fn(() => {
+                    exposedContext = Context.get();
+                });
+
+                Context.run(execute, initialContext);
+                expect(exposedContext).toEqual(expect.objectContaining(
+                    initialContext
+                ));
+            })
+        });
     });
 
     describe('Context Availability', () => {
