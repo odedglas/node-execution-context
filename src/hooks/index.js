@@ -58,7 +58,7 @@ const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
 
     // Parent context will be released upon last child removal
     if (!children.length) {
-        executionContextMap.delete(ref)
+        suspend(() => executionContextMap.delete(ref));
 
         return;
     }
@@ -91,7 +91,8 @@ const destroy = (executionContextMap) => (asyncId)=> {
             ref
         );
     }
-    executionContextMap.delete(asyncId);
+
+    suspend(() => executionContextMap.delete(asyncId));
 };
 
 
