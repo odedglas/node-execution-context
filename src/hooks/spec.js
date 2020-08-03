@@ -152,11 +152,11 @@ describe('Context / Hooks', () => {
             it('Triggers parent cleanup when all child process died', (done) => {
                 children.forEach(destroy);
 
-                process.nextTick(() => {
+                setTimeout(() => {
                     expect(executionMap.size).toEqual(0);
 
                     done();
-                });
+                }, 200)
             });
         });
     });

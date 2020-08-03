@@ -105,6 +105,19 @@ const createExecutionContext = () => {
 
                 fn();
             });
+        },
+
+        /**
+         * Monitors current execution map usage
+         * @return {ExecutionMapUsage}
+         */
+        monitor: () => {
+            console.log('Minotir runnig');
+
+            return {
+                size: executionContextMap.size,
+                entries: [...executionContextMap.values()]
+            }
         }
     };
 

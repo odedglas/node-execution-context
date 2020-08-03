@@ -31,6 +31,16 @@ interface HookCallbacks {
     destroy?(asyncId: number): void;
 }
 
+interface ExecutionMapUsageEntry {
+    asyncId: number;
+    type: string;
+}
+
+interface ExecutionMapUsage {
+    size: number;
+    entries: ExecutionMapUsageEntry[];
+}
+
 interface ExecutionContextAPI {
 
     /**
@@ -48,12 +58,17 @@ interface ExecutionContextAPI {
     /**
      * Gets the current async process execution context.
      */
-    get(): object
+    get(): object;
 
     /**
      * Runs a given function within an async resource context
      * @param fn
      * @param initialContext
      */
-    run(fn: Function, initialContext: object): void
+    run(fn: Function, initialContext: object): void;
+
+    /**
+     * Monitors the current execution map usage
+     */
+    monitor(): ExecutionMapUsage;
 }
