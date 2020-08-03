@@ -134,7 +134,7 @@ describe('Context', () => {
                 expect(exposedContext).toEqual(expect.objectContaining(
                     initialContext
                 ));
-            })
+            });
         });
     });
 

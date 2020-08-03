@@ -156,7 +156,7 @@ describe('Context / Hooks', () => {
                     expect(executionMap.size).toEqual(0);
 
                     done();
-                }, 200)
+                }, 200);
             });
         });
     });

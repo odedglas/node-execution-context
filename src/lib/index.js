@@ -12,7 +12,7 @@ const env = process.env.NODE_ENV || PRODUCTION;
  * @param {Number} created - The created time to calculate it's duration
  * @return {Number}
  */
-const getDuration = (now, created) => now - created
+const getDuration = (now, created) => now - created;
 
 module.exports = {
     env,
@@ -38,13 +38,13 @@ module.exports = {
                 children: children.map((childId) => {
                     const { type, created } = executionContextMap.get(childId);
 
-                    return { asyncId: childId, type, created, duration: getDuration(now, created) }
+                    return { asyncId: childId, type, created, duration: getDuration(now, created) };
                 })
             }));
 
         return {
             size: executionContextMap.size,
             entries
-        }
+        };
     }
 };

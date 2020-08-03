@@ -1,5 +1,5 @@
 const asyncHooks = require('async_hooks');
-const ExecutionContextResource = require('./lib/ExecutionContextResource')
+const ExecutionContextResource = require('./lib/ExecutionContextResource');
 const { isProduction, monitorMap } = require('./lib');
 const { create: createHooks } = require('./hooks');
 const { ExecutionContextErrors } = require('./constants');
@@ -119,7 +119,7 @@ const createExecutionContext = () => {
     };
 
     return Context;
-}
+};
 
 global.ExecutionContext = global.ExecutionContext || createExecutionContext();
 

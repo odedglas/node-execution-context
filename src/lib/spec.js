@@ -78,7 +78,7 @@ describe('Lib', () => {
 
                         expect(report.size > 0).toBeTruthy();
                         expect(report.entries.length > 0).toBeTruthy();
-                        done()
+                        done();
                     });
                 });
             });
