@@ -74,6 +74,10 @@ Returns the current execution context identified with the current asyncId.
 
 Runs a given function under a dedicated AsyncResource, exposing given initial context to the process and it's child processes.
 
+### monitor(): ExecutionMapUsage
+
+Returns an monitoring report over the current execution map resources
+
 ### API Usage
 
 
@@ -107,6 +111,7 @@ Promise.resolve().then(() => {
         }, 1000);
         
         console.log(Context.get()); // outputs: {"value": true}
+        console.log(Context.monitor) // Will result with monitor result 
     });
 });
 ```
