@@ -104,7 +104,7 @@ const destroy = (executionContextMap) => (asyncId)=> {
  * The Create hooks callback to be passed to "async_hooks"
  * @param {ExecutionContextMap} executionContextMap - The execution context map
  * @see https://nodejs.org/api/async_hooks.html#async_hooks_async_hooks_createhook_callbacks
- * @returns HookCallbacks
+ * @returns {HookCallbacks}
  */
 const create = (executionContextMap) => ({
     init: init(executionContextMap),

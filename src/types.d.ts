@@ -82,3 +82,10 @@ interface ExecutionContextAPI {
      */
     monitor(): ExecutionMapUsage;
 }
+
+export {
+    ExecutionContextMap,
+    ExecutionContextAPI,
+    ExecutionMapUsage,
+    ExecutionMapUsageEntry
+}
