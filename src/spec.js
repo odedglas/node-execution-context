@@ -189,20 +189,4 @@ describe('Context', () => {
             });
         });
     });
-
-    describe('Monitor', () => {
-        describe('When no context is open', () => {
-            it('Returns empty usage', (done) => {
-                console.log(Context.monitor())
-
-                setTimeout(() => console.log(Context.monitor()), 1000)
-                setTimeout(() => console.log(Context.monitor()), 3000)
-                setTimeout(() => {
-                    console.log(Context.monitor())
-                    done();
-                }, 5000)
-
-            });
-        });
-    });
 });

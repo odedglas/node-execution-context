@@ -60,7 +60,7 @@ describe('Context / Hooks', () => {
             it('Register sub process as ref entry under root process', () => {
                 expect(executionMap.size).toEqual(2);
 
-                expect(executionMap.get(childAsyncId)).toEqual({
+                expect(executionMap.get(childAsyncId)).toMatchObject({
                     ref: triggerAsyncId
                 });
             });
@@ -76,7 +76,7 @@ describe('Context / Hooks', () => {
                 const nestedChildAsyncId = await spawn(childAsyncId);
 
                 expect(executionMap.size).toEqual(3);
-                expect(executionMap.get(nestedChildAsyncId)).toEqual({
+                expect(executionMap.get(nestedChildAsyncId)).toMatchObject({
                     ref: triggerAsyncId
                 });
 
