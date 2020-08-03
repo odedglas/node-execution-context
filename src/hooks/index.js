@@ -33,13 +33,16 @@ const init = (executionContextMap) => (asyncId, type, triggerAsyncId) => {
 
         // Setting child process entry as ref to parent context
         executionContextMap.set(asyncId, {
-            ref
+            ref,
+            type,
+            created: Date.now()
         });
 
-        const { context = {}, children = [] } = executionContextMap.get(ref);
+        const { context = {}, children = [], ...meta } = executionContextMap.get(ref);
 
         // Adding current async as child to parent context in order to control cleanup better
         executionContextMap.set(ref, {
+            ...meta,
             context,
             children: [...children, asyncId]
         });
@@ -53,7 +56,7 @@ const init = (executionContextMap) => (asyncId, type, triggerAsyncId) => {
  * @param {Number} ref - The parent process ref asyncId
  */
 const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
-    const { children: parentChildren, context } = executionContextMap.get(ref);
+    const { children: parentChildren, context, ...meta } = executionContextMap.get(ref);
     const children = parentChildren.filter((id) => id !== asyncId);
 
     // Parent context will be released upon last child removal
@@ -64,6 +67,7 @@ const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
     }
 
     executionContextMap.set(ref, {
+        ...meta,
         context,
         children
     });

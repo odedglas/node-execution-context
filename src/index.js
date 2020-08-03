@@ -1,6 +1,6 @@
 const asyncHooks = require('async_hooks');
 const ExecutionContextResource = require('./lib/ExecutionContextResource')
-const { isProduction } = require('./lib');
+const { isProduction, monitorMap } = require('./lib');
 const { create: createHooks } = require('./hooks');
 const { ExecutionContextErrors } = require('./constants');
 
@@ -48,7 +48,9 @@ const createExecutionContext = () => {
             if (executionContextMap.has(asyncId)) handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
 
             executionContextMap.set(asyncId, {
+                asyncId,
                 context: { ...initialContext, executionId: asyncId },
+                created: Date.now(),
                 children: []
             });
         },
@@ -112,12 +114,7 @@ const createExecutionContext = () => {
          * @return {ExecutionMapUsage}
          */
         monitor: () => {
-            console.log('Minotir runnig');
-
-            return {
-                size: executionContextMap.size,
-                entries: [...executionContextMap.values()]
-            }
+            return monitorMap(executionContextMap);
         }
     };
 

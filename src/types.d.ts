@@ -31,9 +31,19 @@ interface HookCallbacks {
     destroy?(asyncId: number): void;
 }
 
-interface ExecutionMapUsageEntry {
+interface ExecutionMapUsageBaseEntry {
     asyncId: number;
+    created: number;
+    duration: number;
+}
+
+interface ExecutionMapUsageChildEntry extends ExecutionMapUsageBaseEntry {
     type: string;
+}
+
+interface ExecutionMapUsageEntry extends ExecutionMapUsageBaseEntry {
+    asyncId: number;
+    children: ExecutionMapUsageChildEntry[];
 }
 
 interface ExecutionMapUsage {
