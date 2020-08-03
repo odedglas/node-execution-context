@@ -16,8 +16,11 @@ const getDuration = (now, created) => now - created
 
 module.exports = {
     env,
+
     isProduction: (environment = env) => environment === PRODUCTION,
+
     isUndefined: (thing) => [null, undefined].includes(thing),
+
     /**
      * Returns a monitoring report over the "executionContext" memory usage.
      * @param {ExecutionContextMap} executionContextMap The execution map to monitor
