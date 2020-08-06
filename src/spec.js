@@ -135,6 +135,30 @@ describe('Context', () => {
                     initialContext
                 ));
             });
+
+            describe('Errors', () => {
+                const runWithinPromise = () => new Promise((resolve, reject) => {
+                    const error = new Error('Promise failed');
+                    Context.run(() => reject(error));
+                });
+
+                it('Bubbles up error', () => {
+                    const errorFn = () => {
+                        throw new Error('That went badly.');
+                    }
+                    expect(() => Context.run(errorFn)).toThrow();
+                });
+
+                it('Rejects promises', async (done) => {
+                    try {
+                        await runWithinPromise();
+                        expect(true).toBeFlasy();
+                    } catch (e) {
+                        expect(e).toBeInstanceOf(Error)
+                        done();
+                    }
+                });
+            });
         });
     });
 
