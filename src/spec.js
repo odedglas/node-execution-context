@@ -145,7 +145,7 @@ describe('Context', () => {
                 it('Bubbles up error', () => {
                     const errorFn = () => {
                         throw new Error('That went badly.');
-                    }
+                    };
                     expect(() => Context.run(errorFn)).toThrow();
                 });
 
@@ -154,7 +154,7 @@ describe('Context', () => {
                         await runWithinPromise();
                         expect(true).toBeFlasy();
                     } catch (e) {
-                        expect(e).toBeInstanceOf(Error)
+                        expect(e).toBeInstanceOf(Error);
                         done();
                     }
                 });
