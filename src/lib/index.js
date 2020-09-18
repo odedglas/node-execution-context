@@ -1,3 +1,5 @@
+const ExecutionContextResource = require('./ExecutionContextResource');
+
 /**
  * The production environment
  * @type {String}
@@ -15,15 +17,26 @@ const env = process.env.NODE_ENV || PRODUCTION;
 const getDuration = (now, created) => now - created;
 
 module.exports = {
+    ExecutionContextResource,
     env,
 
+    /**
+     * Checks if current environment matches production.
+     * @param {String} environment - The current environment.
+     * @return {Boolean}
+     */
     isProduction: (environment = env) => environment === PRODUCTION,
 
+    /**
+     * Checks if a given value is undefined.
+     * @param {String} thing that thing to check.
+     * @return {Boolean}
+     */
     isUndefined: (thing) => [null, undefined].includes(thing),
 
     /**
      * Returns a monitoring report over the "executionContext" memory usage.
-     * @param {ExecutionContextMap} executionContextMap The execution map to monitor
+     * @param {ExecutionContextMap} executionContextMap The execution map to monitor.
      * @return {ExecutionMapUsage}
      */
     monitorMap: (executionContextMap) => {
