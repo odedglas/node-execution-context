@@ -1,4 +1,5 @@
 const lib = require ('.');
+const { ExecutionContextErrors } = require('../ExecutionContext/constants');
 const Context = require('../');
 
 describe('Lib', () => {
@@ -35,9 +36,17 @@ describe('Lib', () => {
     });
 
     describe('monitorMap', () => {
+        describe('When context is not configured to tracking', () => {
+           it('Throws miss configured error', () => {
+               expect(() => Context.monitor()).toThrow(ExecutionContextErrors.MONITOR_MISS_CONFIGURATION);
+           });
+        });
+
         describe('When no context is open', () => {
             let report;
             beforeEach(() => {
+                Context.configure({ monitor: true });
+
                 report = Context.monitor();
             });
             it('Returns empty usage', () => {

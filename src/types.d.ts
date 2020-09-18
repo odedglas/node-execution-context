@@ -1,8 +1,10 @@
 interface ExecutionContext {
+    asyncId: number;
+    monitor: boolean;
     ref? :number;
     children?: number[];
     context?: object;
-    created: number;
+    created?: number;
 }
 
 type ExecutionContextMap = Map<number, ExecutionContext>;
@@ -82,6 +84,10 @@ interface ExecutionContextAPI {
      * Monitors the current execution map usage
      */
     monitor(): ExecutionMapUsage;
+}
+
+interface ExecutionContextConfig {
+    monitor: boolean;
 }
 
 export {

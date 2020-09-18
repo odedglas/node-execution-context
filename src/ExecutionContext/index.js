@@ -1,7 +1,7 @@
 const asyncHooks = require('async_hooks');
 const { isProduction, monitorMap, ExecutionContextResource } = require('../lib');
 const { create: createHooks } = require('../hooks');
-const { ExecutionContextErrors } = require('./constants');
+const { DEFAULT_CONFIG, ExecutionContextErrors } = require('./constants');
 
 /**
  * The global service context execution map
@@ -18,16 +18,25 @@ const handleError = (code) => {
         throw code;
     }
 
-    console.warn(code);
+    console.error(code);
 };
 
 class ExecutionContext {
     constructor() {
+        this.config = { ...DEFAULT_CONFIG };
 
         // Sets node async hooks setup
         asyncHooks.createHook(
             createHooks(executionContextMap)
         ).enable();
+    }
+
+    /**
+     * Configures current execution context.
+     * @param {ExecutionContextConfig} config - the configuration to use.
+     */
+    configure(config) {
+        this.config = config;
     }
 
     /**
@@ -37,6 +46,7 @@ class ExecutionContext {
      * @returns void
      */
     create(initialContext = {}) {
+        const config = this.config;
         const asyncId = asyncHooks.executionAsyncId();
 
         // Creation is allowed once per execution context
@@ -44,9 +54,10 @@ class ExecutionContext {
 
         executionContextMap.set(asyncId, {
             asyncId,
+            ...config,
             context: { ...initialContext, executionId: asyncId },
-            created: Date.now(),
-            children: []
+            children: [],
+            ...(config.monitor && { created: Date.now() })
         });
     }
 
@@ -109,6 +120,10 @@ class ExecutionContext {
      * @return {ExecutionMapUsage}
      */
     monitor() {
+        if (!this.config.monitor) {
+            throw new Error(ExecutionContextErrors.MONITOR_MISS_CONFIGURATION);
+        }
+
         return monitorMap(executionContextMap);
     }
 }

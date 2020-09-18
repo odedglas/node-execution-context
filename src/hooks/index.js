@@ -30,17 +30,18 @@ const init = (executionContextMap) => (asyncId, type, triggerAsyncId) => {
     if (!parentContext || EXCLUDED_ASYNC_TYPES.has(type)) return;
 
     const ref = getContextRef(parentContext, triggerAsyncId);
+    const refContext = executionContextMap.get(ref);
 
     // Setting child process entry as ref to parent context
     executionContextMap.set(asyncId, {
         ref,
-        type,
-        created: Date.now()
+        ...(refContext.monitor && {
+            created: Date.now(),
+            type
+        })
     });
 
     // Adding current async as child to parent context in order to control cleanup better
-    const refContext = executionContextMap.get(ref);
-
     refContext.children ? refContext.children.push(asyncId) : refContext.children = [asyncId];
 };
 
@@ -94,7 +95,6 @@ const destroy = (executionContextMap) => (asyncId) => {
 
     suspend(() => executionContextMap.delete(asyncId));
 };
-
 
 /**
  * The Create hooks callback to be passed to "async_hooks"
