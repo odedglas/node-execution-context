@@ -1,10 +1,13 @@
 const asyncHooks = require('async_hooks');
-const hooks = require('./hooks');
+const hooks = require('../hooks');
 const { ExecutionContextErrors } = require('./constants');
 
 describe('Context', () => {
     let Context;
-    beforeEach(() => Context = jest.requireActual('.'));
+    beforeEach(() => {
+        const ExecutionContext = jest.requireActual('.');
+        Context = new ExecutionContext();
+    });
 
     describe('Initialise node "async_hooks"', () => {
         const spies = {

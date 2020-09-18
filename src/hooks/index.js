@@ -25,27 +25,23 @@ const suspend = (fn, ...args) => process.nextTick(() => fn(...args));
  * @returns init-hook(asyncId: Number, type: String, triggerAsyncId:Number)
  */
 const init = (executionContextMap) => (asyncId, type, triggerAsyncId) => {
-        const parentContext = executionContextMap.get(triggerAsyncId);
+    const parentContext = executionContextMap.get(triggerAsyncId);
 
-        if (!parentContext || EXCLUDED_ASYNC_TYPES.has(type)) return;
+    if (!parentContext || EXCLUDED_ASYNC_TYPES.has(type)) return;
 
-        const ref = getContextRef(parentContext, triggerAsyncId);
+    const ref = getContextRef(parentContext, triggerAsyncId);
 
-        // Setting child process entry as ref to parent context
-        executionContextMap.set(asyncId, {
-            ref,
-            type,
-            created: Date.now()
-        });
+    // Setting child process entry as ref to parent context
+    executionContextMap.set(asyncId, {
+        ref,
+        type,
+        created: Date.now()
+    });
 
-        const { context = {}, children = [], ...meta } = executionContextMap.get(ref);
+    // Adding current async as child to parent context in order to control cleanup better
+    const refContext = executionContextMap.get(ref);
 
-        // Adding current async as child to parent context in order to control cleanup better
-        executionContextMap.set(ref, {
-            ...meta,
-            context,
-            children: [...children, asyncId]
-        });
+    refContext.children ? refContext.children.push(asyncId) : refContext.children = [asyncId];
 };
 
 /**
@@ -56,21 +52,17 @@ const init = (executionContextMap) => (asyncId, type, triggerAsyncId) => {
  * @param {Number} ref - The parent process ref asyncId
  */
 const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
-    const { children: parentChildren, context, ...meta } = executionContextMap.get(ref);
-    const children = parentChildren.filter((id) => id !== asyncId);
+    const refContext = executionContextMap.get(ref);
+    const filtered = refContext.children.filter((id) => id !== asyncId);
 
     // Parent context will be released upon last child removal
-    if (!children.length) {
+    if (!filtered.length) {
         suspend(() => executionContextMap.delete(ref));
 
         return;
     }
 
-    executionContextMap.set(ref, {
-        ...meta,
-        context,
-        children
-    });
+    refContext.children = filtered;
 };
 
 /**
@@ -78,13 +70,17 @@ const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
  * @param {ExecutionContextMap} executionContextMap - The execution context map
  * @return destroy-hook(asyncId: Number)
  */
-const destroy = (executionContextMap) => (asyncId)=> {
-    if (!executionContextMap.has(asyncId)) { return; }
+const destroy = (executionContextMap) => (asyncId) => {
+    if (!executionContextMap.has(asyncId)) {
+        return;
+    }
 
     const { children = [], ref } = executionContextMap.get(asyncId);
 
     // As long as any root process holds none finished child process, we keep it alive
-    if (children.length) { return; }
+    if (children.length) {
+        return;
+    }
 
     // Child context's will unregister themselves from root context
     if (!isUndefined(ref)) {

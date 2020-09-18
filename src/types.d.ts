@@ -2,6 +2,7 @@ interface ExecutionContext {
     ref? :number;
     children?: number[];
     context?: object;
+    created: number;
 }
 
 type ExecutionContextMap = Map<number, ExecutionContext>;
