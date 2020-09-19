@@ -89,6 +89,7 @@ Returns an monitoring report over the current execution map resources
 ```js
 const Context = require('node-execution-context');
 
+// Startup
 Context.configure({ monitor: true });
 
 
