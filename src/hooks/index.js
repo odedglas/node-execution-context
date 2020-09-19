@@ -3,7 +3,7 @@ const { EXCLUDED_ASYNC_TYPES } = require('./constants');
 
 /**
  * Returns proper context ref for a given trigger id.
- * @param {ExecutionContext} parentContext - The parent context triggered the init
+ * @param {ExecutionContextNode} parentContext - The parent context triggered the init
  * @param {Number} triggerAsyncId - The current triggerAsyncId
  */
 const getContextRef = (parentContext, triggerAsyncId) => (
@@ -108,4 +108,4 @@ const create = (executionContextMap) => ({
     promiseResolve: destroy(executionContextMap)
 });
 
-module.exports = { create };
+module.exports = { create, onChildProcessDestroy };

@@ -15,3 +15,5 @@ exports.ExecutionContextErrors = {
 exports.DEFAULT_CONFIG = {
     monitor: false
 };
+
+exports.ROOT_DOMAIN = 'ROOT';
