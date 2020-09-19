@@ -62,7 +62,7 @@ export class UserController {
 Creates for the current async resource an execution context entry identified with his asyncId.
 Any future processes that will be added to the async execution chain will be exposed to this context.
 
-|> When passing custom domain to create method, it will ensure current chain is disconnected from the root domain and exposed an standalone context. 
+> When passing custom domain to create method, it will ensure current chain is disconnected from the root domain and exposed an standalone context. 
 
 ### update(update: object)
 
@@ -76,8 +76,26 @@ Returns the current execution context identified with the current asyncId.
 
 Runs a given function under a dedicated AsyncResource, exposing given initial context to the process and it's child processes.
 
+### configure(config: ExecutionContextConfig) : void
+
+Configures execution context settings.
+
 ### monitor(): ExecutionMapUsage
+
 Returns an monitoring report over the current execution map resources
+
+> Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default they are kept as lean as possible.
+
+```js
+const Context = require('node-execution-context');
+
+Context.configure({ monitor: true });
+
+
+// Later on
+const usage = Context.monitor();
+console.log(usage); // Prints execution context usage report.
+```
 
 ### API Usage
 
