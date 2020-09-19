@@ -8,7 +8,8 @@ const {
 } = require('./constants');
 
 /**
- * The global service context execution map
+ * The execution context maps which acts as the execution context in memory storage.
+ * @see ExecutionContext.monitor
  * @type ExecutionContextMap
  */
 const executionContextMap = new Map();
