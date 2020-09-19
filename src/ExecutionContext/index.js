@@ -37,7 +37,7 @@ const handleError = (code) => {
         throw code;
     }
 
-    console.error(code);
+    console.error(code); // eslint-disable-line no-console
 };
 
 class ExecutionContext {

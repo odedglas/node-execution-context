@@ -11,7 +11,7 @@ module.exports = {
         es6: true
     },
     rules: {
-        'no-console': 0,
+        'no-console': 2,
         'no-var': 2,
         'prefer-const': 2,
         semi: 2,

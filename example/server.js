@@ -14,6 +14,6 @@ app.use('/', ContextMiddleware);
 
 app.get('/user', UserController.get);
 
-app.listen(port, function(){
+app.listen(port, () => {
 	console.log('Server is running');
 });

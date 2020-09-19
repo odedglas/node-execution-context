@@ -53,6 +53,8 @@ const init = (executionContextMap) => (asyncId, type, triggerAsyncId) => {
  * @param {Number} ref - The parent process ref asyncId
  */
 const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
+    if (!executionContextMap.has(ref)) return;
+
     const refContext = executionContextMap.get(ref);
     const filtered = refContext.children.filter((id) => id !== asyncId);
 
@@ -72,9 +74,7 @@ const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
  * @return destroy-hook(asyncId: Number)
  */
 const destroy = (executionContextMap) => (asyncId) => {
-    if (!executionContextMap.has(asyncId)) {
-        return;
-    }
+    if (!executionContextMap.has(asyncId)) return;
 
     const { children = [], ref } = executionContextMap.get(asyncId);
 
