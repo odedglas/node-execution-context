@@ -72,10 +72,10 @@ class ExecutionContext {
         const refContext = executionContextMap.get(asyncId);
         if (refContext) {
 
-            // Creation is allowed once per domain execution context
+            // Execution context creation is allowed once per domain
             if (domain === ROOT_DOMAIN) return handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
 
-            // Setting up domain initial context.
+            // Setting up domain initial context
             initialContext = { ...this.get(), ...initialContext };
 
             // Disconnecting current async id from stored parent chain
