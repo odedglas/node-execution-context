@@ -15,8 +15,8 @@ const {
 const executionContextMap = new Map();
 
 /**
- * Creats a root execution context node
- * @param {Number} asyncId - The current async id
+ * Creates a root execution context node.
+ * @param {Number} asyncId - The current async id.
  * @param {Object} initialContext - The initial context ro provide this execution chain.
  * @param {Object} config - The configuration the root context created with.
  * @param {Object} domain - The domain to create the execution context under.
@@ -32,8 +32,8 @@ const createRootContext = ({ asyncId, initialContext, config, domain = ROOT_DOMA
 });
 
 /**
- * Handles execution context error, throws when none production
- * @param code
+ * Handles execution context error, throws when none production.
+ * @param {String} code - The error code to log.
  */
 const handleError = (code) => {
     if (!isProduction()) {
