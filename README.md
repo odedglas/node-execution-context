@@ -129,14 +129,13 @@ Promise.resolve().then(() => {
         }, 1000);
         
         console.log(Context.get()); // outputs: {"value": true}
-        console.log(Context.monitor) // Will result with monitor result 
     });
 });
 ```
 
 The following errors can be thrown while accessing to the context API :
 
-| Code | when |
+| Code | When |
 |-|-
 | CONTEXT_ALREADY_DECLARED | When trying to `create` execution context, but current async resource already exists.
 | CONTEXT_DOES_NOT_EXISTS | When try to `get` / `update` the context, but it yet been created.
