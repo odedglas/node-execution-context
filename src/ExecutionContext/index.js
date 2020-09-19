@@ -43,11 +43,10 @@ const handleError = (code) => {
 class ExecutionContext {
     constructor() {
         this.config = { ...DEFAULT_CONFIG };
-        this.hooks = createHooks(executionContextMap);
 
         // Sets node async hooks setup
         asyncHooks.createHook(
-            this.hooks
+            createHooks(executionContextMap)
         ).enable();
     }
 
