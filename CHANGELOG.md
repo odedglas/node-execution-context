@@ -4,7 +4,7 @@
 
 ### New features
 
-- Domains - allow creating a domain under a certain context to split the chain into a standalone context root (parent chain will not depend on its completion for releasing).
+- Domains - allow creating a domain under a certain context to split the chain into a standalone context root (parent chain will not depend on its completion for release).
 - Configurations settings.
 
 ### Improvements
