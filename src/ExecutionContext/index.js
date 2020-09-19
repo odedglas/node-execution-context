@@ -18,13 +18,15 @@ const executionContextMap = new Map();
  * @param {Number} asyncId - The current async id
  * @param {Object} initialContext - The initial context ro provide this execution chain.
  * @param {Object} config - The configuration the root context created with.
+ * @param {Object} domain - The domain to create the execution context under.
  * @return {ExecutionContextNode}
  */
-const createRootContext = (asyncId, initialContext, config) => ({
+const createRootContext = ({ asyncId, initialContext, config, domain = ROOT_DOMAIN }) => ({
     asyncId,
-    ...config,
+    domain,
     context: { ...initialContext, executionId: asyncId },
     children: [],
+    ...config,
     ...(config.monitor && { created: Date.now() })
 });
 
@@ -73,7 +75,7 @@ class ExecutionContext {
         if (refContext) {
 
             // Execution context creation is allowed once per domain
-            if (domain === ROOT_DOMAIN) return handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
+            if (domain === refContext.domain) return handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
 
             // Setting up domain initial context
             initialContext = { ...this.get(), ...initialContext };
@@ -82,7 +84,14 @@ class ExecutionContext {
             onChildProcessDestroy(executionContextMap, asyncId, refContext.ref);
         }
 
-        const rootContext = createRootContext(asyncId, initialContext, config);
+        // Creating root context node
+        const rootContext = createRootContext({
+            asyncId,
+            initialContext,
+            config,
+            domain
+        });
+
         executionContextMap.set(asyncId, rootContext);
     }
 
@@ -128,13 +137,14 @@ class ExecutionContext {
     /**
      * Runs a given function within "AsyncResource" context, this will ensure the function executed within a uniq execution context.
      * @param {Function} fn - The function to run.
-     * @param {Object} initialContext - The initial context to expose to the function execution
+     * @param {Object} initialContext - The initial context to expose to the function execution.
+     * @param {String} domain - The domain to create the exectuion context under.
      */
-    run(fn, initialContext) {
+    run(fn, initialContext, domain) {
         const resource = new ExecutionContextResource();
 
         resource.runInAsyncScope(() => {
-            this.create(initialContext);
+            this.create(initialContext, domain);
 
             fn();
         });

@@ -119,8 +119,11 @@ describe('Context', () => {
                 Context.run(execute, initialContext);
             });
 
-            it('Creates context', () => {
-                expect(spies.contextCreate).toHaveBeenCalledWith(initialContext);
+            it('Creates context under root domain', () => {
+                expect(spies.contextCreate).toHaveBeenCalledWith(
+                    initialContext,
+                    undefined
+                );
             });
 
             it('Executes given function', () => {

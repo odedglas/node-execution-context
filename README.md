@@ -62,7 +62,7 @@ export class UserController {
 Creates for the current async resource an execution context entry identified with his asyncId.
 Any future processes that will be added to the async execution chain will be exposed to this context.
 
-> When passing custom domain to create method, it will ensure current chain is disconnected from the root domain and exposed an standalone context. 
+> When passing custom domain to this method, the trigger point and all of it's sub processes will be exposed to a standalone context won't effect / be effected by root context. 
 
 ### update(update: object)
 
