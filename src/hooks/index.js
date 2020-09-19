@@ -3,7 +3,7 @@ const { EXCLUDED_ASYNC_TYPES } = require('./constants');
 
 /**
  * Returns proper context ref for a given trigger id.
- * @param {ExecutionContext} parentContext - The parent context triggered the init
+ * @param {ExecutionContextNode} parentContext - The parent context triggered the init
  * @param {Number} triggerAsyncId - The current triggerAsyncId
  */
 const getContextRef = (parentContext, triggerAsyncId) => (
@@ -53,6 +53,8 @@ const init = (executionContextMap) => (asyncId, type, triggerAsyncId) => {
  * @param {Number} ref - The parent process ref asyncId
  */
 const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
+    if (!executionContextMap.has(ref)) return;
+
     const refContext = executionContextMap.get(ref);
     const filtered = refContext.children.filter((id) => id !== asyncId);
 
@@ -72,9 +74,7 @@ const onChildProcessDestroy = (executionContextMap, asyncId, ref) => {
  * @return destroy-hook(asyncId: Number)
  */
 const destroy = (executionContextMap) => (asyncId) => {
-    if (!executionContextMap.has(asyncId)) {
-        return;
-    }
+    if (!executionContextMap.has(asyncId)) return;
 
     const { children = [], ref } = executionContextMap.get(asyncId);
 
@@ -108,4 +108,4 @@ const create = (executionContextMap) => ({
     promiseResolve: destroy(executionContextMap)
 });
 
-module.exports = { create };
+module.exports = { create, onChildProcessDestroy };

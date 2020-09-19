@@ -215,5 +215,33 @@ describe('Context', () => {
                 });
             });
         });
+
+        describe('Domains', () => {
+            it('Blocks when creation is made under the same domain', () => {
+                create();
+
+                expect(create).toThrow();
+            });
+
+            it('Allows to create sub domains under a root context', (done) => {
+                create();
+
+                expect(Context.get().hey).toBeTruthy();
+
+                setTimeout(() => {
+                    Context.create({ some: 'where' }, 'that-domain');
+                    Context.update({ hey: false });
+
+                    expect(Context.get().hey).toBeFalsy();
+                    expect(Context.get().some).toEqual('where');
+                }, 500);
+
+                setTimeout(() => {
+                    expect(Context.get().hey).toBeTruthy();
+
+                    done();
+                }, 1500);
+            });
+        });
     });
 });

@@ -57,10 +57,12 @@ export class UserController {
 
 ## API
 
-### create(initialContext?: object)
+### create(initialContext?: object, domain? :string)
 
 Creates for the current async resource an execution context entry identified with his asyncId.
 Any future processes that will be added to the async execution chain will be exposed to this context.
+
+> When passing custom domain to create method, it will ensure current chain is disconnected from the root domain and exposed an standalone context. 
 
 ### update(update: object)
 
@@ -74,12 +76,28 @@ Returns the current execution context identified with the current asyncId.
 
 Runs a given function under a dedicated AsyncResource, exposing given initial context to the process and it's child processes.
 
+### configure(config: ExecutionContextConfig) : void
+
+Configures execution context settings.
+
 ### monitor(): ExecutionMapUsage
 
 Returns an monitoring report over the current execution map resources
 
-### API Usage
+> Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default they are kept as lean as possible.
 
+```js
+const Context = require('node-execution-context');
+
+Context.configure({ monitor: true });
+
+
+// Later on
+const usage = Context.monitor();
+console.log(usage); // Prints execution context usage report.
+```
+
+### API Usage
 
 ```js
 const Context = require('node-execution-context');
@@ -111,15 +129,15 @@ Promise.resolve().then(() => {
         }, 1000);
         
         console.log(Context.get()); // outputs: {"value": true}
-        console.log(Context.monitor) // Will result with monitor result 
     });
 });
 ```
 
 The following errors can be thrown while accessing to the context API :
 
-| Code | when |
+| Code | When |
 |-|-
 | CONTEXT_ALREADY_DECLARED | When trying to `create` execution context, but current async resource already exists.
 | CONTEXT_DOES_NOT_EXISTS | When try to `get` / `update` the context, but it yet been created.
+| MONITOR_MISS_CONFIGURATION | When try to `monitor` without calling `configure` with monitoring option.
 

@@ -1,13 +1,32 @@
 const asyncHooks = require('async_hooks');
 const { isProduction, monitorMap, ExecutionContextResource } = require('../lib');
-const { create: createHooks } = require('../hooks');
-const { DEFAULT_CONFIG, ExecutionContextErrors } = require('./constants');
+const { create: createHooks, onChildProcessDestroy } = require('../hooks');
+const {
+    DEFAULT_CONFIG,
+    ROOT_DOMAIN,
+    ExecutionContextErrors
+} = require('./constants');
 
 /**
  * The global service context execution map
  * @type ExecutionContextMap
  */
 const executionContextMap = new Map();
+
+/**
+ * Creats a root execution context node
+ * @param {Number} asyncId - The current async id
+ * @param {Object} initialContext - The initial context ro provide this execution chain.
+ * @param {Object} config - The configuration the root context created with.
+ * @return {ExecutionContextNode}
+ */
+const createRootContext = (asyncId, initialContext, config) => ({
+    asyncId,
+    ...config,
+    context: { ...initialContext, executionId: asyncId },
+    children: [],
+    ...(config.monitor && { created: Date.now() })
+});
 
 /**
  * Handles execution context error, throws when none production
@@ -18,7 +37,7 @@ const handleError = (code) => {
         throw code;
     }
 
-    console.error(code);
+    console.error(code); // eslint-disable-line no-console
 };
 
 class ExecutionContext {
@@ -42,23 +61,29 @@ class ExecutionContext {
     /**
      * Creates an execution context for the current asyncId process.
      * This will expose Context get / update at any point after.
-     * @param {Object} initialContext - The initial context to be used
+     * @param {Object} initialContext - The initial context to be used.
+     * @param {String} domain - The domain the context is created under.
      * @returns void
      */
-    create(initialContext = {}) {
+    create(initialContext = {}, domain = ROOT_DOMAIN) {
         const config = this.config;
         const asyncId = asyncHooks.executionAsyncId();
 
-        // Creation is allowed once per execution context
-        if (executionContextMap.has(asyncId)) handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
+        const refContext = executionContextMap.get(asyncId);
+        if (refContext) {
 
-        executionContextMap.set(asyncId, {
-            asyncId,
-            ...config,
-            context: { ...initialContext, executionId: asyncId },
-            children: [],
-            ...(config.monitor && { created: Date.now() })
-        });
+            // Execution context creation is allowed once per domain
+            if (domain === ROOT_DOMAIN) return handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
+
+            // Setting up domain initial context
+            initialContext = { ...this.get(), ...initialContext };
+
+            // Disconnecting current async id from stored parent chain
+            onChildProcessDestroy(executionContextMap, asyncId, refContext.ref);
+        }
+
+        const rootContext = createRootContext(asyncId, initialContext, config);
+        executionContextMap.set(asyncId, rootContext);
     }
 
     /**
@@ -69,7 +94,7 @@ class ExecutionContext {
     update(update = {}) {
         const asyncId = asyncHooks.executionAsyncId();
 
-        if (!executionContextMap.has(asyncId)) handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
         const contextData = executionContextMap.get(asyncId);
 
@@ -87,7 +112,7 @@ class ExecutionContext {
      */
     get() {
         const asyncId = asyncHooks.executionAsyncId();
-        if (!executionContextMap.has(asyncId)) handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
         const { context = {}, ref } = executionContextMap.get(asyncId);
         if (ref) {

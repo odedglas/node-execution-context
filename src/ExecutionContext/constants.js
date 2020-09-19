@@ -15,3 +15,9 @@ exports.ExecutionContextErrors = {
 exports.DEFAULT_CONFIG = {
     monitor: false
 };
+
+/**
+ * The default domain to create execution context roots under.
+ * @type {String}
+ */
+exports.ROOT_DOMAIN = 'ROOT';
