@@ -43,9 +43,10 @@ module.exports = {
         const now = Date.now();
         const entries = [...executionContextMap.values()]
             .filter(({ children }) => !!children)
-            .map(({ asyncId, created, children, context = {} }) => ({
+            .map(({ asyncId, created, children, domain, context = {} }) => ({
                 asyncId,
                 created,
+                domain,
                 contextSize: JSON.stringify(context).length,
                 duration: getDuration(now, created),
                 children: children.map((childId) => {

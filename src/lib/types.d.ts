@@ -10,6 +10,7 @@ interface ExecutionMapUsageChildEntry extends ExecutionMapUsageBaseEntry {
 
 interface ExecutionMapUsageEntry extends ExecutionMapUsageBaseEntry {
     asyncId: number;
+    domain: string;
     children: ExecutionMapUsageChildEntry[];
 }
 
