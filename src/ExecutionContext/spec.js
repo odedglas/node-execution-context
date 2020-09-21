@@ -1,10 +1,13 @@
 const asyncHooks = require('async_hooks');
-const hooks = require('./hooks');
+const hooks = require('../hooks');
 const { ExecutionContextErrors } = require('./constants');
 
 describe('Context', () => {
     let Context;
-    beforeEach(() => Context = jest.requireActual('.'));
+    beforeEach(() => {
+        const ExecutionContext = jest.requireActual('.');
+        Context = new ExecutionContext();
+    });
 
     describe('Initialise node "async_hooks"', () => {
         const spies = {
@@ -116,8 +119,11 @@ describe('Context', () => {
                 Context.run(execute, initialContext);
             });
 
-            it('Creates context', () => {
-                expect(spies.contextCreate).toHaveBeenCalledWith(initialContext);
+            it('Creates context under root domain', () => {
+                expect(spies.contextCreate).toHaveBeenCalledWith(
+                    initialContext,
+                    undefined
+                );
             });
 
             it('Executes given function', () => {
@@ -210,6 +216,34 @@ describe('Context', () => {
                     expect(get()).toBeFalsy();
                     done();
                 });
+            });
+        });
+
+        describe('Domains', () => {
+            it('Blocks when creation is made under the same domain', () => {
+                create();
+
+                expect(create).toThrow();
+            });
+
+            it('Allows to create sub domains under a root context', (done) => {
+                create();
+
+                expect(Context.get().hey).toBeTruthy();
+
+                setTimeout(() => {
+                    Context.create({ some: 'where' }, 'that-domain');
+                    Context.update({ hey: false });
+
+                    expect(Context.get().hey).toBeFalsy();
+                    expect(Context.get().some).toEqual('where');
+                }, 500);
+
+                setTimeout(() => {
+                    expect(Context.get().hey).toBeTruthy();
+
+                    done();
+                }, 1500);
             });
         });
     });
