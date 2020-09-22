@@ -15,7 +15,6 @@ Let't start with creating the context initialisation point of our app, well take
 // main.js
 
 const express = require('express');
-const { AsyncResource } = require('async_hooks');
 const Context = require('node-execution-context');
 const UserController = require('./controllers/user');
 const app = express();
@@ -62,7 +61,7 @@ export class UserController {
 Creates for the current async resource an execution context entry identified with his asyncId.
 Any future processes that will be added to the async execution chain will be exposed to this context.
 
-> When passing custom domain to this method, the trigger point and all of it's sub processes will be exposed to a standalone context won't effect / be effected by root context. 
+> When passing custom domain to this method, the trigger point and all of it's sub processes will be exposed to a standalone context and won't effect / be effected by root context. 
 
 ### update(update: object)
 
@@ -84,7 +83,7 @@ Configures execution context settings.
 
 Returns an monitoring report over the current execution map resources
 
-> Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default they are kept as lean as possible.
+> Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default the data kept is as possible.
 
 ```js
 const Context = require('node-execution-context');
