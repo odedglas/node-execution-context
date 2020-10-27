@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.0.3 (October 27, 2020)
+
+### Improvements
+
+- Domains error logging enhancement.
+
 ## 2.0.2 (October 27, 2020)
 
 ### Bug Fixes

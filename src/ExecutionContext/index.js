@@ -90,7 +90,10 @@ class ExecutionContext {
         if (rootContext) {
 
             // Execution context creation is allowed once per domain
-            if (domain === rootContext.domain) return handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
+            if (domain === rootContext.domain) return handleError([
+                ExecutionContextErrors.CONTEXT_ALREADY_DECLARED,
+                `Given Domain: ${domain} / Current Domain: ${rootContext.domain}`
+            ].join(' '));
 
             // Setting up domain initial context
             initialContext = { ...rootContext.context, ...initialContext };
