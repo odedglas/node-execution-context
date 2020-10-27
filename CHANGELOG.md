@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2.0.5 (October 27, 2020)
+
+- publish
+
+## 2.0.4 (October 27, 2020)
+
+- Versions.
+
 ## 2.0.3 (October 27, 2020)
 
 ### Improvements

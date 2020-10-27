@@ -1,6 +1,6 @@
 {
   "name": "node-execution-context",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Provides execution context wrapper for node JS, can be used to create execution wrapper for handling requests and more",
   "author": "Oded Goldglas <odedglas@gmail.com>",
   "license": "ISC",
@@ -13,7 +13,8 @@
   "scripts": {
     "test": "jest -c configuration/jest.config.js",
     "lint": "eslint .",
-    "build": "webpack --config configuration/webpack.config"
+    "build": "webpack --config configuration/webpack.config",
+    "publish-package": "npm run build && npm run publish"
   },
   "keywords": [
     "node",
