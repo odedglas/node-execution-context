@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 2.0.2 (October 27, 2020)
+
+### Bug Fixes
+
+- Domains root context fetching, extracted to private `getRootContext`.
+
+## 2.0.1 (September 22, 2020)
+
+### Improvements
+
+- Update changelog.
+
 ## 2.0.0 (September 19, 2020)
 
 ### New features

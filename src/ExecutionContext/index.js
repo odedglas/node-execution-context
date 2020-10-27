@@ -62,6 +62,20 @@ class ExecutionContext {
     }
 
     /**
+     * Returns current execution id root context for the current asyncId process.
+     * @param {Number} asyncId - The current execution context id.
+     * @return {ExecutionContextNode}
+     * @private
+     */
+    _getRootContext(asyncId) {
+        const context = executionContextMap.get(asyncId);
+
+        if (context && context.ref) return executionContextMap.get(context.ref);
+
+        return context;
+    }
+
+    /**
      * Creates an execution context for the current asyncId process.
      * This will expose Context get / update at any point after.
      * @param {Object} initialContext - The initial context to be used.
@@ -72,28 +86,28 @@ class ExecutionContext {
         const config = this.config;
         const asyncId = asyncHooks.executionAsyncId();
 
-        const refContext = executionContextMap.get(asyncId);
-        if (refContext) {
+        const rootContext = this._getRootContext(asyncId);
+        if (rootContext) {
 
             // Execution context creation is allowed once per domain
-            if (domain === refContext.domain) return handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
+            if (domain === rootContext.domain) return handleError(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
 
             // Setting up domain initial context
-            initialContext = { ...this.get(), ...initialContext };
+            initialContext = { ...rootContext.context, ...initialContext };
 
             // Disconnecting current async id from stored parent chain
-            onChildProcessDestroy(executionContextMap, asyncId, refContext.ref);
+            onChildProcessDestroy(executionContextMap, asyncId, rootContext.asyncId);
         }
 
         // Creating root context node
-        const rootContext = createRootContext({
+        const root = createRootContext({
             asyncId,
             initialContext,
             config,
             domain
         });
 
-        executionContextMap.set(asyncId, rootContext);
+        executionContextMap.set(asyncId, root);
     }
 
     /**
@@ -106,14 +120,10 @@ class ExecutionContext {
 
         if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
-        const contextData = executionContextMap.get(asyncId);
-
         // Update target is always the root context, ref updates will need to be channeled
-        const targetContextData = contextData.ref
-            ? executionContextMap.get(contextData.ref)
-            : contextData;
+        const rootContext = this._getRootContext(asyncId);
 
-        targetContextData.context = { ...targetContextData.context, ...update };
+        rootContext.context = { ...rootContext.context, ...update };
     }
 
     /**
@@ -122,17 +132,10 @@ class ExecutionContext {
      */
     get() {
         const asyncId = asyncHooks.executionAsyncId();
+
         if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
-        const { context = {}, ref } = executionContextMap.get(asyncId);
-        if (ref) {
-
-            // Ref will be used to point out on the root context
-            return executionContextMap.get(ref).context;
-        }
-
-        // Root context
-        return context;
+        return this._getRootContext(asyncId).context;
     }
 
     /**
