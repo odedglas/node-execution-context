@@ -43,6 +43,9 @@ const handleError = (code) => {
     console.error(code); // eslint-disable-line no-console
 };
 
+/**
+ * @type {ExecutionContextAPI}
+ */
 class ExecutionContext {
     constructor() {
         this.config = { ...DEFAULT_CONFIG };

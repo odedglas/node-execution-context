@@ -29,7 +29,7 @@ interface ExecutionContextAPI {
     /**
      * Gets the current async process execution context.
      */
-    get(): object;
+    get<T>(): T;
 
     /**
      * Runs a given function within an async resource context

@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## 2.0.6 (December 2, 2020)
+
+- Better types definition for get.
+
 ## 2.0.5 (October 27, 2020)
 
-- publish
+- publish.
 
 ## 2.0.4 (October 27, 2020)
 
