@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.8 (December 20, 2020)
+
+- Better reporting, safe child getters.
+
 ## 2.0.7 (December 20, 2020)
 
 - Preferring `setImmediate` over `nextTick`.

@@ -41,7 +41,8 @@ module.exports = {
      */
     monitorMap: (executionContextMap) => {
         const now = Date.now();
-        const entries = [...executionContextMap.values()]
+        const mapEntries = [...executionContextMap.values()];
+        const entries = mapEntries
             .filter(({ children }) => !!children)
             .map(({ asyncId, created, children, domain, context = {} }) => ({
                 asyncId,
@@ -50,10 +51,11 @@ module.exports = {
                 contextSize: JSON.stringify(context).length,
                 duration: getDuration(now, created),
                 children: children.map((childId) => {
-                    const { type, created } = executionContextMap.get(childId);
+                    const { type, created } =  executionContextMap.get(childId) || {};
+                    if (!type) return;
 
                     return { asyncId: childId, type, created, duration: getDuration(now, created) };
-                })
+                }).filter(Boolean)
             }));
 
         return {
