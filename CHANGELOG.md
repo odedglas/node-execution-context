@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.0.7 (December 20, 2020)
+
+- Preferring `setImmediate` over `nextTick`.
+
 ## 2.0.6 (December 2, 2020)
 
 - Better types definition for get.

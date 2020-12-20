@@ -11,12 +11,12 @@ const getContextRef = (parentContext, triggerAsyncId) => (
 );
 
 /**
- * Suspends a given f   unction execution over process next tick.
+ * Suspends a given function execution over process next tick.
  * @param {Function} fn - The function to trigger upon next tick.
  * @param {...any} args - The function arguments to trigger with.
  * @return {any}
  */
-const suspend = (fn, ...args) => process.nextTick(() => fn(...args));
+const suspend = (fn, ...args) => setImmediate(() => fn(...args));
 
 /**
  * The "async_hooks" init hook callback, used to initialize sub process of the main context

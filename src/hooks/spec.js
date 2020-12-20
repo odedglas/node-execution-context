@@ -114,7 +114,7 @@ describe('Context / Hooks', () => {
 
                 destroy(triggerAsyncId);
 
-                process.nextTick(() => {
+                setImmediate(() => {
                     expect(executionMap.get(triggerAsyncId)).toBeUndefined();
                     expect(spies.contextMapDelete).toHaveBeenCalledWith(triggerAsyncId);
 
@@ -142,7 +142,7 @@ describe('Context / Hooks', () => {
                 const [ firstChild ] = children;
                 destroy(firstChild);
 
-                process.nextTick(() => {
+                setImmediate(() => {
                     expect(spies.contextMapDelete).toHaveBeenCalledWith(firstChild);
 
                     done();
