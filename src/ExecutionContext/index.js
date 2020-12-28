@@ -127,9 +127,9 @@ class ExecutionContext {
         if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
         // Update target is always the root context, ref updates will need to be channeled
-        const rootContext = this._getRootContext(asyncId);
+        const { context } = this._getRootContext(asyncId);
 
-        rootContext.context = { ...rootContext.context, ...update };
+        context = Object.assign(context, update);
     }
 
     /**
