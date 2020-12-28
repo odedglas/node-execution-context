@@ -25,7 +25,7 @@ const executionContextMap = new Map();
 const createRootContext = ({ asyncId, initialContext, config, domain = ROOT_DOMAIN }) => ({
     asyncId,
     domain,
-    context: { ...initialContext, executionId: asyncId },
+    context: Object.assign(initialContext, { executionId: asyncId }),
     children: [],
     ...config,
     ...(config.monitor && { created: Date.now() })
@@ -99,7 +99,7 @@ class ExecutionContext {
             ].join(' '));
 
             // Setting up domain initial context
-            initialContext = { ...rootContext.context, ...initialContext };
+            initialContext = Object.assign(rootContext.context, initialContext);
 
             // Disconnecting current async id from stored parent chain
             onChildProcessDestroy(executionContextMap, asyncId, rootContext.asyncId);
