@@ -1,10 +1,8 @@
 const asyncHooks = require('async_hooks');
-const { monitorMap, ExecutionContextResource } = require('../lib');
-const { create: createHooks } = require('../hooks');
-const {
-    DEFAULT_CONFIG,
-    ExecutionContextErrors
-} = require('./constants');
+const { monitorMap, handleError, ExecutionContextResource } = require('../../lib');
+const { create: createHooks, onChildProcessDestroy } = require('./hooks');
+const { ExecutionContextErrors } = require('../constants');
+const { DEFAULT_CONFIG } = require('./constants');
 
 /**
  * The execution context maps which acts as the execution context in memory storage.
@@ -73,6 +71,13 @@ class AsyncHooksContext {
         const config = this.config;
         const asyncId = asyncHooks.executionAsyncId();
 
+        const rootContext = this._getRootContext(asyncId);
+        if (rootContext) {
+
+            // Disconnecting current async id from stored parent chain
+            onChildProcessDestroy(executionContextMap, asyncId, rootContext.asyncId);
+        }
+
         // Creating root context node
         const root = createRootContext({
             asyncId,
@@ -91,7 +96,7 @@ class AsyncHooksContext {
     set(context) {
         const asyncId = asyncHooks.executionAsyncId();
 
-        if (!executionContextMap.has(asyncId)) return;
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
         // Update target is always the root context, ref updates will need to be channeled
         const rootContext = this._getRootContext(asyncId);
@@ -106,7 +111,7 @@ class AsyncHooksContext {
     get() {
         const asyncId = asyncHooks.executionAsyncId();
 
-        if (!executionContextMap.has(asyncId)) return;
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
 
         return this._getRootContext(asyncId).context;
     }
@@ -120,7 +125,7 @@ class AsyncHooksContext {
         const resource = new ExecutionContextResource();
 
         resource.runInAsyncScope(() => {
-            this.create(initialContext, domain);
+            this.create(context);
 
             fn();
         });
@@ -139,4 +144,4 @@ class AsyncHooksContext {
     }
 }
 
-module.exports = ExecutionContext;
+module.exports = AsyncHooksContext;

@@ -1,4 +1,4 @@
-const { isUndefined } = require('../../lib');
+const { isUndefined } = require('../../../lib');
 const { EXCLUDED_ASYNC_TYPES } = require('./constants');
 
 /**

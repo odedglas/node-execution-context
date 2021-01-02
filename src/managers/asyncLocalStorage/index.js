@@ -1,6 +1,6 @@
 const { AsyncLocalStorage } = require('async_hooks');
-const { isProduction, isUndefined } = require('../lib');
-const { ExecutionContextErrors } = require('./constants');
+const { handleError, isUndefined } = require('../../lib');
+const { ExecutionContextErrors } = require('../constants');
 
 /**
  * Check whether a given async local storage has a valid store.
@@ -10,18 +10,6 @@ const { ExecutionContextErrors } = require('./constants');
 const validateStore = (asyncLocalStorage) => !isUndefined(
     asyncLocalStorage.getStore()
 );
-
-/**
- * Handles execution context error, throws when none production.
- * @param {String} code - The error code to log.
- */
-const handleError = (code) => {
-    if (!isProduction()) {
-        throw code;
-    }
-
-    console.error(code); // eslint-disable-line no-console
-};
 
 /**
  * @type {ExecutionContextAPI}
@@ -82,12 +70,12 @@ class AsyncLocalStorageContext {
     }
 
     configure() {
-        console.warn('Configure is relevant only for AsyncHooks context manager, and should not be used on this current node version.');
+        console.warn('Configure is relevant only for AsyncHooks context manager, and should not be used on this current node version.'); // eslint-disable-line no-console
     }
 
     monitor() {
-        console.warn('Monitoring is based over node `AsyncLocalStorage` feature and should not be monitor');
+        console.warn('Monitoring is based over node `AsyncLocalStorage` feature and should not be monitor'); // eslint-disable-line no-console
     }
 }
 
-module.exports = ExecutionContext;
+module.exports = AsyncLocalStorageContext;

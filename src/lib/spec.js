@@ -1,6 +1,6 @@
 const lib = require ('.');
 const { ExecutionContextErrors } = require('../ExecutionContext/constants');
-const Context = require('../');
+const { AsyncHooksContext, AsyncLocalStorageContext } = require('../managers');
 
 describe('Lib', () => {
     describe('isProduction', () => {
@@ -36,60 +36,80 @@ describe('Lib', () => {
     });
 
     describe('monitorMap', () => {
-        describe('When context is not configured to tracking', () => {
-           it('Throws miss configured error', () => {
-               expect(() => Context.monitor()).toThrow(ExecutionContextErrors.MONITOR_MISS_CONFIGURATION);
-           });
-        });
+        describe('AsyncHooksContext', () => {
+            const Context = new AsyncHooksContext();
 
-        describe('When no context is open', () => {
-            let report;
-            beforeEach(() => {
-                Context.configure({ monitor: true });
-
-                report = Context.monitor();
-            });
-            it('Returns empty usage', () => {
-                expect(report.size).toEqual(0);
-            });
-
-            it('Return empty array entries', () => {
-                expect(Array.isArray(report.entries)).toBeTruthy();
-                expect(report.entries).toHaveLength(0);
-            });
-        });
-
-        describe('When context is created', () => {
-            const contextAware = (fn) => {
-                Context.create({ value: true });
-                fn();
-            };
-
-            const spwan = () => new Promise((resolve) => setTimeout(resolve, 100));
-
-            describe('When a single process is present', () => {
-                it('Reports with empty usage', () => {
-                    contextAware(() => {
-                        const report = Context.monitor();
-
-                        expect(report.size).toEqual(1);
-                        expect(report.entries).toHaveLength(1);
-                        expect(report.entries[0].children).toHaveLength(0);
-                    });
+            describe('When context is not configured to tracking', () => {
+                it('Throws miss configured error', () => {
+                    expect(() => Context.monitor()).toThrow(ExecutionContextErrors.MONITOR_MISS_CONFIGURATION);
                 });
             });
 
-            describe('When sub process is present', () => {
-                it('Reports root context entries', (done) => {
-                    contextAware(() => {
-                        spwan();
-                        const report = Context.monitor();
+            describe('When no context is open', () => {
+                let report;
+                beforeEach(() => {
+                    Context.configure({ monitor: true });
 
-                        expect(report.size > 0).toBeTruthy();
-                        expect(report.entries.length > 0).toBeTruthy();
-                        done();
+                    report = Context.monitor();
+                });
+                it('Returns empty usage', () => {
+                    expect(report.size).toEqual(0);
+                });
+
+                it('Return empty array entries', () => {
+                    expect(Array.isArray(report.entries)).toBeTruthy();
+                    expect(report.entries).toHaveLength(0);
+                });
+            });
+
+            describe('When context is created', () => {
+                const contextAware = (fn) => {
+                    Context.create({ value: true });
+                    fn();
+                };
+
+                const spwan = () => new Promise((resolve) => setTimeout(resolve, 100));
+
+                describe('When a single process is present', () => {
+                    it('Reports with empty usage', () => {
+                        contextAware(() => {
+                            const report = Context.monitor();
+
+                            expect(report.size).toEqual(1);
+                            expect(report.entries).toHaveLength(1);
+                            expect(report.entries[0].children).toHaveLength(0);
+                        });
                     });
                 });
+
+                describe('When sub process is present', () => {
+                    it('Reports root context entries', (done) => {
+                        contextAware(() => {
+                            spwan();
+                            const report = Context.monitor();
+
+                            expect(report.size > 0).toBeTruthy();
+                            expect(report.entries.length > 0).toBeTruthy();
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+
+        describe('AsyncLocalStorageContext', () => {
+            const Context = new AsyncLocalStorageContext();
+            let spiesWarn = jest.spyOn(console, 'warn');
+            let result;
+
+            beforeEach(() => result = Context.monitor());
+
+            it('Should warn about monitoring usage', () => {
+                expect(spiesWarn).toHaveBeenCalledTimes(1);
+            });
+
+            it('Returns undefined', () => {
+                expect(result).toBeUndefined();
             });
         });
     });

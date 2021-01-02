@@ -4,6 +4,15 @@ const delay = (callback, timeout = 1000) => setTimeout(() => {
 	callback();
 }, timeout);
 
+const promise = (name) => new Promise(resolve => {
+	Context.run(() => {
+		setTimeout(() => {
+			console.log('Promise domain :', Context.get());
+			resolve();
+		}, 1000)
+	}, { name }, `domain-${name}`);
+})
+
 class UserController {
 	get(req, res) {
 
@@ -18,11 +27,15 @@ class UserController {
 
 			delay(() => {
 				console.log('Domain callback ', Context.get()) // { val: true, specific: true }
-				Context.update({ inner: true });
+				Context.set({ inner: true });
 
 			}, 400);
 		}, 4000)
 
+		promise('oded');
+		promise('lotem');
+
+		console.log('Final : ', Context.get())
 		res.send(Context.get());
 	}
 }
