@@ -1,5 +1,3 @@
-const ExecutionContextResource = require('./ExecutionContextResource');
-
 /**
  * The production environment
  * @type {String}
@@ -8,16 +6,7 @@ const PRODUCTION = 'production';
 
 const env = process.env.NODE_ENV || PRODUCTION;
 
-/**
- * Calculates a duration between a given moment and now
- * @param {Number} now - The current time
- * @param {Number} created - The created time to calculate it's duration
- * @return {Number}
- */
-const getDuration = (now, created) => now - created;
-
 module.exports = {
-    ExecutionContextResource,
     env,
 
     /**
@@ -32,35 +21,5 @@ module.exports = {
      * @param {String} thing that thing to check.
      * @return {Boolean}
      */
-    isUndefined: (thing) => [null, undefined].includes(thing),
-
-    /**
-     * Returns a monitoring report over the "executionContext" memory usage.
-     * @param {ExecutionContextMap} executionContextMap The execution map to monitor.
-     * @return {ExecutionMapUsage}
-     */
-    monitorMap: (executionContextMap) => {
-        const now = Date.now();
-        const mapEntries = [...executionContextMap.values()];
-        const entries = mapEntries
-            .filter(({ children }) => !!children)
-            .map(({ asyncId, created, children, domain, context = {} }) => ({
-                asyncId,
-                created,
-                domain,
-                contextSize: JSON.stringify(context).length,
-                duration: getDuration(now, created),
-                children: children.map((childId) => {
-                    const { type, created } =  executionContextMap.get(childId) || {};
-                    if (!type) return;
-
-                    return { asyncId: childId, type, created, duration: getDuration(now, created) };
-                }).filter(Boolean)
-            }));
-
-        return {
-            size: executionContextMap.size,
-            entries
-        };
-    }
+    isUndefined: (thing) => [null, undefined].includes(thing)
 };

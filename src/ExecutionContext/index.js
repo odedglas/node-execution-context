@@ -1,35 +1,15 @@
-const asyncHooks = require('async_hooks');
-const { isProduction, monitorMap, ExecutionContextResource } = require('../lib');
-const { create: createHooks, onChildProcessDestroy } = require('../hooks');
-const {
-    DEFAULT_CONFIG,
-    ROOT_DOMAIN,
-    ExecutionContextErrors
-} = require('./constants');
+const { AsyncLocalStorage } = require('async_hooks');
+const { isProduction, isUndefined } = require('../lib');
+const { ExecutionContextErrors } = require('./constants');
 
 /**
- * The execution context maps which acts as the execution context in memory storage.
- * @see ExecutionContext.monitor
- * @type ExecutionContextMap
+ * Check whether a given async local storage has a valid store.
+ * @param {AsyncLocalStorage} asyncLocalStorage - The async local storage to validate it's store presence
+ * @return {Boolean}
  */
-const executionContextMap = new Map();
-
-/**
- * Creates a root execution context node.
- * @param {Number} asyncId - The current async id.
- * @param {Object} initialContext - The initial context ro provide this execution chain.
- * @param {Object} config - The configuration the root context created with.
- * @param {Object} domain - The domain to create the execution context under.
- * @return {ExecutionContextNode}
- */
-const createRootContext = ({ asyncId, initialContext, config, domain = ROOT_DOMAIN }) => ({
-    asyncId,
-    domain,
-    context: { ...initialContext, executionId: asyncId },
-    children: [],
-    ...config,
-    ...(config.monitor && { created: Date.now() })
-});
+const validateStore = (asyncLocalStorage) => !isUndefined(
+    asyncLocalStorage.getStore()
+);
 
 /**
  * Handles execution context error, throws when none production.
@@ -48,128 +28,57 @@ const handleError = (code) => {
  */
 class ExecutionContext {
     constructor() {
-        this.config = { ...DEFAULT_CONFIG };
-
-        // Sets node async hooks setup
-        asyncHooks.createHook(
-            createHooks(executionContextMap)
-        ).enable();
+        this.asyncLocaleStorage = new AsyncLocalStorage();
     }
 
     /**
-     * Configures current execution context.
-     * @param {ExecutionContextConfig} config - the configuration to use.
+     * Creates a given context for the current asynchronous execution.
+     * Note that if this method will be called not within a AsyncResource context, it will effect current execution context.
+     * @param {*} context - The context to expose.
+     * @return void
      */
-    configure(config) {
-        this.config = config;
+    create(context){
+        this.asyncLocaleStorage.enterWith({ context });
     }
 
     /**
-     * Returns current execution id root context for the current asyncId process.
-     * @param {Number} asyncId - The current execution context id.
-     * @return {ExecutionContextNode}
-     * @private
+     * Runs given callback and exposed under a given context.
+     * This will expose the given context within all callbacks and promise chains that will be called from given fn.
+     * @param {Function} fn - The function to run.
+     * @param {*} context - The context to expose.
      */
-    _getRootContext(asyncId) {
-        const context = executionContextMap.get(asyncId);
+    run(fn, context) {
+        return this.asyncLocaleStorage.run(
+            { context },
+            fn
+        );
+    }
 
-        if (context && context.ref) return executionContextMap.get(context.ref);
+    /**
+     * Gets the current asynchronous execution context.
+     * @return {*}
+     */
+    get() {
+        if (!validateStore(this.asyncLocaleStorage)) {
+            return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+        }
+
+        const { context } = this.asyncLocaleStorage.getStore();
 
         return context;
     }
 
     /**
-     * Creates an execution context for the current asyncId process.
-     * This will expose Context get / update at any point after.
-     * @param {Object} initialContext - The initial context to be used.
-     * @param {String} domain - The domain the context is created under.
+     * Sets the current asynchronous execution context to given value.
+     * @param {*} context - The new context to expose current asynchronous execution.
      * @returns void
      */
-    create(initialContext = {}, domain = ROOT_DOMAIN) {
-        const config = this.config;
-        const asyncId = asyncHooks.executionAsyncId();
-
-        const rootContext = this._getRootContext(asyncId);
-        if (rootContext) {
-
-            // Execution context creation is allowed once per domain
-            if (domain === rootContext.domain) return handleError([
-                ExecutionContextErrors.CONTEXT_ALREADY_DECLARED,
-                `Given Domain: ${domain} / Current Domain: ${rootContext.domain}`
-            ].join(' '));
-
-            // Setting up domain initial context
-            initialContext = { ...rootContext.context, ...initialContext };
-
-            // Disconnecting current async id from stored parent chain
-            onChildProcessDestroy(executionContextMap, asyncId, rootContext.asyncId);
+    set(context) {
+        if (!validateStore(this.asyncLocaleStorage)) {
+            return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
         }
 
-        // Creating root context node
-        const root = createRootContext({
-            asyncId,
-            initialContext,
-            config,
-            domain
-        });
-
-        executionContextMap.set(asyncId, root);
-    }
-
-    /**
-     * Updates the current async process context.
-     * @param {Object} update - The update to apply on the current process context.
-     * @returns void
-     */
-    update(update = {}) {
-        const asyncId = asyncHooks.executionAsyncId();
-
-        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
-
-        // Update target is always the root context, ref updates will need to be channeled
-        const rootContext = this._getRootContext(asyncId);
-
-        rootContext.context = { ...rootContext.context, ...update };
-    }
-
-    /**
-     * Gets the current async process execution context.
-     * @returns {Object}
-     */
-    get() {
-        const asyncId = asyncHooks.executionAsyncId();
-
-        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
-
-        return this._getRootContext(asyncId).context;
-    }
-
-    /**
-     * Runs a given function within "AsyncResource" context, this will ensure the function executed within a uniq execution context.
-     * @param {Function} fn - The function to run.
-     * @param {Object} initialContext - The initial context to expose to the function execution.
-     * @param {String} domain - The domain to create the exectuion context under.
-     */
-    run(fn, initialContext, domain) {
-        const resource = new ExecutionContextResource();
-
-        resource.runInAsyncScope(() => {
-            this.create(initialContext, domain);
-
-            fn();
-        });
-    }
-
-    /**
-     * Monitors current execution map usage
-     * @return {ExecutionMapUsage}
-     */
-    monitor() {
-        if (!this.config.monitor) {
-            throw new Error(ExecutionContextErrors.MONITOR_MISS_CONFIGURATION);
-        }
-
-        return monitorMap(executionContextMap);
+        this.asyncLocaleStorage.getStore().context = context;
     }
 }
 

@@ -1,56 +1,28 @@
-import { ExecutionMapUsage } from '../lib/types';
-
-interface ExecutionContextNode {
-    asyncId: number;
-    monitor: boolean;
-    domain: string,
-    ref? :number;
-    children?: number[];
-    context?: object;
-    created?: number;
-}
-
-type ExecutionContextMap = Map<number, ExecutionContextNode>;
-
-interface ExecutionContextAPI {
+export interface ExecutionContextAPI {
 
     /**
-     * Creates an execution context for the current asyncId process.
-     * @param initialContext
+     * Creates a given context for the current asynchronous execution.
+     * Note that if this method will be called not within a AsyncResource context, it will effect current execution context.
+     * @param context
      */
-    create(initialContext: object): void;
+    create(context: unknown): void;
 
     /**
-     * Updates the current async process context.
-     * @param update
+     * Sets the current asynchronous execution context to given value.
+     * @param context - The new context to expose current asynchronous execution.
      */
-    update(update: object): void;
+    set(context: unknown): void;
 
     /**
-     * Gets the current async process execution context.
+     * Gets the current asynchronous execution context.
      */
     get<T>(): T;
 
     /**
-     * Runs a given function within an async resource context
+     * Runs given callback and exposed under a given context.
+     * This will expose the given context within all callbacks and promise chains that will be called from given fn.
      * @param fn
-     * @param initialContext
+     * @param context
      */
-    run(fn: Function, initialContext: object): void;
-
-    /**
-     * Monitors the current execution map usage
-     */
-    monitor(): ExecutionMapUsage;
-}
-
-interface ExecutionContextConfig {
-    monitor: boolean;
-}
-
-export {
-    ExecutionContextNode,
-    ExecutionContextMap,
-    ExecutionContextAPI,
-    ExecutionContextConfig
+    run(fn: Function, context: unknown): void;
 }
