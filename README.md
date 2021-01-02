@@ -1,5 +1,5 @@
 # node-execution-context
-A straightforward library that provides a persistent local thread level execution context using node [`AsyncLocalStorage`](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage) feature. 
+A straightforward library that provides a persistent local thread level execution context using node [`async_hooks`](https://nodejs.org/api/async_hooks.html) feature. 
 
 ## Installation
 
