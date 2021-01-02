@@ -14,7 +14,7 @@
     "test": "jest -c configuration/jest.config.js",
     "lint": "eslint .",
     "build": "webpack --config configuration/webpack.config",
-    "publish-package": "npm run build && npm publish"
+    "publish-package": "npm run build && npm publish --tag lts-v2"
   },
   "keywords": [
     "node",
