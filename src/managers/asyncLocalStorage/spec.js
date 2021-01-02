@@ -1,3 +1,4 @@
+const { supportAsyncLocalStorage } = require('../../lib');
 const AsyncLocalStorageContext = require('.');
 
 describe('AsyncLocalStorageContext', () => {
@@ -13,6 +14,8 @@ describe('AsyncLocalStorageContext', () => {
         'monitor',
         'configure'
     ])('Should warn about usage', (apiName) => {
+        const shouldValidate = supportAsyncLocalStorage();
+
         let spiesWarn;
         let result;
 
@@ -22,11 +25,11 @@ describe('AsyncLocalStorageContext', () => {
         });
 
         it('Should warn about monitoring usage', () => {
-            expect(spiesWarn).toHaveBeenCalledTimes(1);
+            shouldValidate && expect(spiesWarn).toHaveBeenCalledTimes(1);
         });
 
         it('Returns undefined', () => {
-            expect(result).toBeUndefined();
+            shouldValidate && expect(result).toBeUndefined();
         });
     });
 });

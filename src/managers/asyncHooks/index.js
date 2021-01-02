@@ -40,14 +40,6 @@ class AsyncHooksContext {
     }
 
     /**
-     * Configures current execution context manager.
-     * @param {ExecutionContextConfig} config - the configuration to use.
-     */
-    configure(config) {
-        this.config = config;
-    }
-
-    /**
      * Returns current execution id root context for the current asyncId process.
      * @param {Number} asyncId - The current execution context id.
      * @return {ExecutionContextNode}
@@ -89,6 +81,33 @@ class AsyncHooksContext {
     }
 
     /**
+     * Runs a given function within "AsyncResource" context, this will ensure the function executed within a uniq execution context.
+     * @param {Function} fn - The function to run.
+     * @param {*} context - The initial context to expose to the function execution.
+     */
+    run(fn, context) {
+        const resource = new ExecutionContextResource();
+
+        resource.runInAsyncScope(() => {
+            this.create(context);
+
+            fn();
+        });
+    }
+
+    /**
+     * Gets the current async process execution context.
+     * @returns {*}
+     */
+    get() {
+        const asyncId = asyncHooks.executionAsyncId();
+
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+
+        return this._getRootContext(asyncId).context;
+    }
+
+    /**
      * Updates the current async process context.
      * @param {*} context - The new context to set.
      * @returns void
@@ -105,30 +124,11 @@ class AsyncHooksContext {
     }
 
     /**
-     * Gets the current async process execution context.
-     * @returns {*}
+     * Configures current execution context manager.
+     * @param {ExecutionContextConfig} config - the configuration to use.
      */
-    get() {
-        const asyncId = asyncHooks.executionAsyncId();
-
-        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
-
-        return this._getRootContext(asyncId).context;
-    }
-
-    /**
-     * Runs a given function within "AsyncResource" context, this will ensure the function executed within a uniq execution context.
-     * @param {Function} fn - The function to run.
-     * @param {*} context - The initial context to expose to the function execution.
-     */
-    run(fn, context) {
-        const resource = new ExecutionContextResource();
-
-        resource.runInAsyncScope(() => {
-            this.create(context);
-
-            fn();
-        });
+    configure(config) {
+        this.config = config;
     }
 
     /**
