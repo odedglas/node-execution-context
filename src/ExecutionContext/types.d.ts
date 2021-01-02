@@ -3,7 +3,6 @@ import { ExecutionMapUsage } from '../lib/types';
 interface ExecutionContextNode {
     asyncId: number;
     monitor: boolean;
-    domain: string,
     ref? :number;
     children?: number[];
     context?: object;

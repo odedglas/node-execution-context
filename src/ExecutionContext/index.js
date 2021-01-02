@@ -70,7 +70,7 @@ class ExecutionContext {
      * @return {ExecutionContextNode}
      * @private
      */
-    _getRootContext(asyncId) {
+      _getRootContext(asyncId) {
         const context = executionContextMap.get(asyncId);
 
         if (context && context.ref) return executionContextMap.get(context.ref);
