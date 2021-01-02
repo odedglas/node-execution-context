@@ -1,6 +1,6 @@
 const lib = require ('.');
 const { ExecutionContextErrors } = require('../ExecutionContext/constants');
-const { AsyncHooksContext, AsyncLocalStorageContext } = require('../managers');
+const { AsyncHooksContext } = require('../managers');
 
 describe('Lib', () => {
     describe('isProduction', () => {
@@ -94,22 +94,6 @@ describe('Lib', () => {
                         });
                     });
                 });
-            });
-        });
-
-        describe('AsyncLocalStorageContext', () => {
-            const Context = new AsyncLocalStorageContext();
-            const spiesWarn = jest.spyOn(console, 'warn');
-            let result;
-
-            beforeEach(() => result = Context.monitor());
-
-            it('Should warn about monitoring usage', () => {
-                expect(spiesWarn).toHaveBeenCalledTimes(1);
-            });
-
-            it('Returns undefined', () => {
-                expect(result).toBeUndefined();
             });
         });
     });
