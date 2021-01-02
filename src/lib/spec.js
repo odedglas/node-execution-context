@@ -99,7 +99,7 @@ describe('Lib', () => {
 
         describe('AsyncLocalStorageContext', () => {
             const Context = new AsyncLocalStorageContext();
-            let spiesWarn = jest.spyOn(console, 'warn');
+            const spiesWarn = jest.spyOn(console, 'warn');
             let result;
 
             beforeEach(() => result = Context.monitor());

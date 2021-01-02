@@ -1,6 +1,6 @@
 const { AsyncLocalStorage } = require('async_hooks');
 const { handleError, isUndefined } = require('../../lib');
-const { ExecutionContextErrors } = require('../constants');
+const { ExecutionContextErrors } = require('../../ExecutionContext/constants');
 
 /**
  * Check whether a given async local storage has a valid store.

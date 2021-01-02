@@ -1,7 +1,7 @@
 const asyncHooks = require('async_hooks');
 const { monitorMap, handleError, ExecutionContextResource } = require('../../lib');
 const { create: createHooks, onChildProcessDestroy } = require('./hooks');
-const { ExecutionContextErrors } = require('../constants');
+const { ExecutionContextErrors } = require('../../ExecutionContext/constants');
 const { DEFAULT_CONFIG } = require('./constants');
 
 /**
