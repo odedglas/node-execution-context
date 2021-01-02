@@ -23,7 +23,7 @@
     "async-hooks"
   ],
   "engines": {
-    "node": ">=8.6.0"
+    "node": ">=12.7.0"
   },
   "engineStrict": true,
   "devDependencies": {

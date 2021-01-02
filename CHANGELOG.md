@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 3.0.0 (January 02, 2021)
+
+- Complete API migration to be based on `AsyncLocaleStorage`
+- `update` API changed to `set`.
+- Support min node version of `12.7.x`
+- Drop `monitoring`.
+
 ## 2.0.8 (December 20, 2020)
 
 - Better reporting, safe child getters.

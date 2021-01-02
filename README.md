@@ -1,5 +1,5 @@
 # node-execution-context
-A straightforward library that provides a persistent process-level context wrapper using node "async_hooks" feature. 
+A straightforward library that provides a persistent local thread level execution context using node [`AsyncLocalStorage`](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage) feature. 
 
 ## Installation
 
@@ -56,12 +56,9 @@ export class UserController {
 
 ## API
 
-### create(initialContext?: object, domain? :string)
+### run(fn: Function, initialContext: object)
 
-Creates for the current async resource an execution context entry identified with his asyncId.
-Any future processes that will be added to the async execution chain will be exposed to this context.
-
-> When passing custom domain to this method, the trigger point and all of it's sub processes will be exposed to a standalone context and won't effect / be effected by root context. 
+Runs a given function under a dedicated AsyncResource, exposing given initial context to the process and it's child processes.
 
 ### update(update: object)
 
@@ -71,31 +68,12 @@ Updates the current execution context with a given update obect.
 
 Returns the current execution context identified with the current asyncId.
 
-### run(fn: Function, initialContext: object)
+### create(initialContext?: object, domain? :string)
 
-Runs a given function under a dedicated AsyncResource, exposing given initial context to the process and it's child processes.
+Creates for the current async resource an execution context entry identified with his asyncId.
+Any future processes that will be added to the async execution chain will be exposed to this context.
 
-### configure(config: ExecutionContextConfig) : void
-
-Configures execution context settings.
-
-### monitor(): ExecutionMapUsage
-
-Returns an monitoring report over the current execution map resources
-
-> Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default the data kept is as possible.
-
-```js
-const Context = require('node-execution-context');
-
-// Startup
-Context.configure({ monitor: true });
-
-
-// Later on
-const usage = Context.monitor();
-console.log(usage); // Prints execution context usage report.
-```
+> When passing custom domain to this method, the trigger point and all of it's sub processes will be exposed to a standalone context and won't effect / be effected by root context. 
 
 ### API Usage
 
@@ -108,27 +86,27 @@ Context.create({
 
 Promise.resolve().then(() => {
     console.log(Context.get()); // outputs: {"value": true}
-    
-    Context.update({
+
+    Context.set({
         value: false
     });
-    
+
     return new Promise((resolve) => {
+        console.log(Context.get()); // outputs: {"value": false}
+
         setTimeout(() => {
-            console.log(Context.get()); // outputs: {"value": false}
-            
-            Context.update({
+            Context.create({
                 butter: 'fly'
             });
-            
+
             process.nextTick(() => {
-                console.log(Context.get()); // outputs: {"value": false, "butter": 'fly'}
+                console.log(Context.get()); // outputs: {"butter": 'fly'}
                 resolve();
             });
-            
+
         }, 1000);
-        
-        console.log(Context.get()); // outputs: {"value": true}
+
+        console.log(Context.get()); // outputs: {"value": false}
     });
 });
 ```
@@ -137,7 +115,5 @@ The following errors can be thrown while accessing to the context API :
 
 | Code | When |
 |-|-
-| CONTEXT_ALREADY_DECLARED | When trying to `create` execution context, but current async resource already exists.
 | CONTEXT_DOES_NOT_EXISTS | When try to `get` / `update` the context, but it yet been created.
-| MONITOR_MISS_CONFIGURATION | When try to `monitor` without calling `configure` with monitoring option.
 

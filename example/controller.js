@@ -10,24 +10,19 @@ class UserController {
 
 		delay(() => {
 			console.log('Callback : ', Context.get()); // { val: true }
-		});
+		}, 300);
 
-		// Creates a dedicate domain context ( exclude this following chain from root context )
-		// Updates mae from domain will not effect root context.
+		// Creates a dedicated context bounded to Timeout AsyncResource
+		// Any changes that will apply on that context will not effect outter scope.
 		delay(() => {
 			Context.create({ specific: true });
 
 			delay(() => {
-				console.log('Domain callback ', Context.get()) // { val: true, specific: true }
-				Context.set({ specific: true, my: 'bad' });
+				console.log('Domain callback ', Context.get()) // { specific: true }
 			}, 400);
-
-			delay(() => {
-				console.log('Domain Long callback ', Context.get())
-			}, 800);
 		}, 4000)
 
-		res.send(Context.get());
+		res.send(Context.get()); // Returns { val: true }
 	}
 }
 
