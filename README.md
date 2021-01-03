@@ -57,7 +57,7 @@ export class UserController {
 
 ## API
 
-### create(initialContext?: object, domain? :string)
+### create(context?: unknown)
 
 Creates for the current async resource an execution context entry identified with his asyncId.
 Any future processes that will be added to the async execution chain will be exposed to this context.
@@ -66,13 +66,13 @@ Any future processes that will be added to the async execution chain will be exp
 
 ### set(context: unknown)
 
-Updates the current execution context with a given update obect.
+Sets the current execution context with a given update obect.
 
 ### get()
 
 Returns the current execution context identified with the current asyncId.
 
-### run(fn: Function, initialContext: object)
+### run(fn: Function, context: unknown)
 
 Runs a given function under a dedicated AsyncResource, exposing given initial context to the process and it's child processes.
 
@@ -80,14 +80,13 @@ Runs a given function under a dedicated AsyncResource, exposing given initial co
 
 Configures execution context settings.
 
-> Relevant only for node lower than `v12.17.0`.
-
+> Relevant only for node versions lower than `v12.17.0`.
 
 ### monitor(): ExecutionMapUsage
 
 Returns an monitoring report over the current execution map resources
 
-> Relevant only for node lower than `v12.17.0`.
+> Relevant only for node versions lower than `v12.17.0`.
 
 > Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default the data kept is as possible.
 
