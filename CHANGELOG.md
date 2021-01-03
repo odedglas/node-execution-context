@@ -5,6 +5,7 @@
 - Introduce `AsyncLocaleStorage` implementation based for node `12.7.0` and above.
 - `AsyncHooksContext` domains now created by default under they hook and do not requires consumer to defined it's name.
 - `update` API changed to `set`.
+- `create` API stop treads `context` as objects by design.
 
 ## 2.0.8 (December 20, 2020)
 
