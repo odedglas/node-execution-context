@@ -21,7 +21,7 @@ describe('AsyncLocalStorageContext', () => {
 
         beforeEach(() => {
             spiesWarn = jest.spyOn(console, 'warn');
-            Context[apiName]();
+            shouldValidate && Context[apiName]();
         });
 
         it('Should warn about monitoring usage', () => {

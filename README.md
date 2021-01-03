@@ -1,5 +1,6 @@
 # node-execution-context
-A straightforward library that provides a persistent process-level context wrapper using node "async_hooks" feature. 
+A straightforward library that provides a persistent process-level context wrapper using node "async_hooks" feature.
+This library will try to use by default `AsyncLocalStorage` implementation based and will fallback to raw `async_hooks` implementation for lower versions. 
 
 ## Installation
 
@@ -63,7 +64,7 @@ Any future processes that will be added to the async execution chain will be exp
 
 > When passing custom domain to this method, the trigger point and all of it's sub processes will be exposed to a standalone context and won't effect / be effected by root context. 
 
-### update(update: object)
+### set(context: unknown)
 
 Updates the current execution context with a given update obect.
 
@@ -79,9 +80,14 @@ Runs a given function under a dedicated AsyncResource, exposing given initial co
 
 Configures execution context settings.
 
+> Relevant only for node lower than `v12.17.0`.
+
+
 ### monitor(): ExecutionMapUsage
 
 Returns an monitoring report over the current execution map resources
+
+> Relevant only for node lower than `v12.17.0`.
 
 > Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default the data kept is as possible.
 
@@ -97,7 +103,7 @@ const usage = Context.monitor();
 console.log(usage); // Prints execution context usage report.
 ```
 
-### API Usage
+### Raw API Usage
 
 ```js
 const Context = require('node-execution-context');
@@ -109,7 +115,7 @@ Context.create({
 Promise.resolve().then(() => {
     console.log(Context.get()); // outputs: {"value": true}
     
-    Context.update({
+    Context.set({
         value: false
     });
     
@@ -117,18 +123,18 @@ Promise.resolve().then(() => {
         setTimeout(() => {
             console.log(Context.get()); // outputs: {"value": false}
             
-            Context.update({
+            Context.set({
                 butter: 'fly'
             });
             
             process.nextTick(() => {
-                console.log(Context.get()); // outputs: {"value": false, "butter": 'fly'}
+                console.log(Context.get()); // outputs: {"butter": 'fly'}
                 resolve();
             });
             
         }, 1000);
         
-        console.log(Context.get()); // outputs: {"value": true}
+        console.log(Context.get()); // outputs: {"value": false}
     });
 });
 ```
@@ -137,7 +143,6 @@ The following errors can be thrown while accessing to the context API :
 
 | Code | When |
 |-|-
-| CONTEXT_ALREADY_DECLARED | When trying to `create` execution context, but current async resource already exists.
 | CONTEXT_DOES_NOT_EXISTS | When try to `get` / `update` the context, but it yet been created.
 | MONITOR_MISS_CONFIGURATION | When try to `monitor` without calling `configure` with monitoring option.
 

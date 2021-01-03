@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.0.0 (January 03, 2021)
+
+- Introduce `AsyncLocaleStorage` implementation based for node `12.7.0` and above.
+- `AsyncHooksContext` domains now created by default under they hook and do not requires consumer to defined it's name.
+- `update` API changed to `set`.
+
 ## 2.0.8 (December 20, 2020)
 
 - Better reporting, safe child getters.
