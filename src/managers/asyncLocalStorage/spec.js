@@ -1,12 +1,15 @@
 const { supportAsyncLocalStorage } = require('../../lib');
 const AsyncLocalStorageContext = require('.');
 
+/**
+ * Runs given assertion only in case "AsyncLocalStorage" feature supported by current running node.
+ * @param {Function} assertion - The assertion to call.
+ * @return {Boolean}
+ */
+const safeAssert = (assertion) => supportAsyncLocalStorage() && assertion();
+
 describe('AsyncLocalStorageContext', () => {
     let Context;
-
-    beforeEach(() => {
-        Context = new AsyncLocalStorageContext();
-    });
 
     afterEach(jest.clearAllMocks);
 
@@ -19,17 +22,22 @@ describe('AsyncLocalStorageContext', () => {
         let spiesWarn;
         let result;
 
-        beforeEach(() => {
+        const setup = () => {
             spiesWarn = jest.spyOn(console, 'warn');
-            shouldValidate && Context[apiName]();
+            Context = shouldValidate && new AsyncLocalStorageContext();
+            result = shouldValidate ? Context[apiName]() : undefined;
+        }
+
+        beforeEach(() => {
+            shouldValidate && setup();
         });
 
         it('Should warn about monitoring usage', () => {
-            shouldValidate && expect(spiesWarn).toHaveBeenCalledTimes(1);
+            safeAssert(() => expect(spiesWarn).toHaveBeenCalledTimes(1));
         });
 
         it('Returns undefined', () => {
-            shouldValidate && expect(result).toBeUndefined();
+            safeAssert(() => expect(result).toBeUndefined());
         });
     });
 });
