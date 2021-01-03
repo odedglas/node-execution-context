@@ -36,7 +36,7 @@ interface ExecutionContextAPI {
     get<T>(): T;
 
     /**
-     * Runs given callback and exposed under a given context.
+     * Runs given callback that will be exposed to the given context.
      * This will expose the given context within all callbacks and promise chains that will be called from given fn.
      * @param fn - The function to run.
      * @param context - The context to expose.
