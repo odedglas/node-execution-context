@@ -26,7 +26,7 @@ describe('AsyncLocalStorageContext', () => {
             spiesWarn = jest.spyOn(console, 'warn');
             Context = shouldValidate && new AsyncLocalStorageContext();
             result = shouldValidate ? Context[apiName]() : undefined;
-        }
+        };
 
         beforeEach(() => {
             shouldValidate && setup();
