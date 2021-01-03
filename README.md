@@ -1,6 +1,6 @@
 # node-execution-context
 A straightforward library that provides a persistent process-level context wrapper using node "async_hooks" feature.
-This library will try to use by default `AsyncLocalStorage` implementation based if current node version supports it, otherwise it will fallback to raw `async_hooks` implementation for lower versions which mimics this behaviour. 
+This library will try to use by default [`AsyncLocalStorage`](https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage) implementation based if current node version supports it, otherwise it will fallback to raw [`async_hooks`](https://nodejs.org/api/async_hooks.html) implementation for lower versions which mimics this behaviour. 
 
 ## Installation
 
