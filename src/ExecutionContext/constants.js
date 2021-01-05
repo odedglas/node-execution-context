@@ -3,7 +3,7 @@
  * @type {Object<String>}
  */
 exports.ExecutionContextErrors = {
-    CONTEXT_DOES_NOT_EXISTS: 'Execution context does not exists, please ensure to call create/run before.',
+    CONTEXT_DOES_NOT_EXIST: 'Execution context does not exists, please ensure to call create/run before.',
     MONITOR_MISS_CONFIGURATION: 'Monitoring option is off by default, please call `configure` with the proper options.'
 };
 

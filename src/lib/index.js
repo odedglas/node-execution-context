@@ -31,10 +31,10 @@ module.exports = {
 
     /**
      * Checks if a given value is undefined.
-     * @param {*} thing that thing to check.
+     * @param {*} input - that input to check.
      * @return {Boolean}
      */
-    isUndefined: (thing) => [null, undefined].includes(thing),
+    isUndefined: (input) => [null, undefined].includes(input),
 
     /**
      * Handles execution context error, throws when none production.

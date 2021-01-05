@@ -32,7 +32,7 @@ class AsyncLocalStorageContext {
 
     get() {
         if (!validateStore(this.asyncLocaleStorage)) {
-            return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+            return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
         }
 
         const { context } = this.asyncLocaleStorage.getStore();
@@ -42,7 +42,7 @@ class AsyncLocalStorageContext {
 
     set(context) {
         if (!validateStore(this.asyncLocaleStorage)) {
-            return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+            return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
         }
 
         this.asyncLocaleStorage.getStore().context = context;

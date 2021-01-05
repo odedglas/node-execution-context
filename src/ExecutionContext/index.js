@@ -13,7 +13,8 @@ class ExecutionContext {
 
     /**
      * Creates a given context for the current asynchronous execution.
-     * Note that if this method will be called not within a AsyncResource context, it will effect current execution context.
+     * Note that this method will override the current execution context if called twice within the same `AsyncResource`.
+     * Calling this method in a separate `AsyncResource` will create a new execution context for that resource.
      * @param {*} context - The context to expose.
      * @return void
      */

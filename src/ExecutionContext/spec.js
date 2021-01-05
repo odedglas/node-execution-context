@@ -20,7 +20,7 @@ describe('Context', () => {
         describe('Get', () => {
             it('Throws an error when context is not created', () => {
                 expect(() => Context.get())
-                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
             });
 
             describe('When context is created', () => {
@@ -36,7 +36,7 @@ describe('Context', () => {
         describe('Set', () => {
             it('Throws an error when context is not created', () => {
                 expect(() => Context.get())
-                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
             });
 
             describe('When context is created', () => {

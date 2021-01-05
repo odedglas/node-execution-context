@@ -102,7 +102,7 @@ class AsyncHooksContext {
     get() {
         const asyncId = asyncHooks.executionAsyncId();
 
-        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
 
         return this._getRootContext(asyncId).context;
     }
@@ -115,7 +115,7 @@ class AsyncHooksContext {
     set(context) {
         const asyncId = asyncHooks.executionAsyncId();
 
-        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
 
         // Update target is always the root context, ref updates will need to be channeled
         const rootContext = this._getRootContext(asyncId);

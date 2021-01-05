@@ -60,24 +60,24 @@ export class UserController {
 ### run(fn: Function, context: unknown)
 
 Runs given callback that will be exposed to the given context.
-The context will be exposed within all callbacks and promises chain that will be trigger from given fn.
+The context will be exposed to all callbacks and promise chains triggered from the given `fn`.
 
 ### get()
 
 Gets the current asynchronous execution context.
 
-> This API may throw CONTEXT_DOES_NOT_EXISTS error if accessed without initializing the context properly.
+> This API may throw CONTEXT_DOES_NOT_EXIST error if accessed without initializing the context properly.
 
 ### set(context: unknown)
 
 Sets the current asynchronous execution context to given value.
 
-> This API may throw CONTEXT_DOES_NOT_EXISTS error if accessed without initializing the context properly.
+> This API may throw CONTEXT_DOES_NOT_EXIST error if accessed without initializing the context properly.
 
 ### create(context?: unknown)
 
 Creates a given context for the current asynchronous execution.
-This method shouldn't be used most of the times and relevant only when you need to support some even driven case such and can't use the `run` method directly.
+It is recommended to use the `run` method. This method should be used in special cases in which the `run` method cannot be used directly.
 
 > Note that if this method will be called not within a AsyncResource context, it will effect current execution context and should be used with caution. 
 
@@ -168,6 +168,6 @@ The following errors can be thrown while accessing to the context API :
 
 | Code | When |
 |-|-
-| CONTEXT_DOES_NOT_EXISTS | When try to `get` / `set` the context, but it yet been created.
+| CONTEXT_DOES_NOT_EXIST | When attempting to `get` / `set` a context, that has not yet been created.
 | MONITOR_MISS_CONFIGURATION | When try to `monitor` without calling `configure` with monitoring option.
 
