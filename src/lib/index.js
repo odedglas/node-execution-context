@@ -41,11 +41,13 @@ module.exports = {
      * @param {String} code - The error code to log.
      */
     handleError: (code) => {
+        const error = new Error(code);
+
         if (!isProduction()) {
-            throw code;
+            throw error;
         }
 
-        console.error(code); // eslint-disable-line no-console
+        console.error(error); // eslint-disable-line no-console
     },
 
     /**

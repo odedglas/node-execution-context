@@ -66,6 +66,8 @@ The context will be exposed to all callbacks and promise chains triggered from t
 
 Gets the current asynchronous execution context.
 
+> The `get` result is returned by `reference` meaning if you wish any immutability applied, it will have to be manually applied. 
+
 > This API may throw CONTEXT_DOES_NOT_EXIST error if accessed without initializing the context properly.
 
 ### set(context: unknown)
@@ -80,6 +82,8 @@ Creates a given context for the current asynchronous execution.
 It is recommended to use the `run` method. This method should be used in special cases in which the `run` method cannot be used directly.
 
 > Note that if this method will be called not within a AsyncResource context, it will effect current execution context and should be used with caution. 
+
+#### Example
 
 ```js
 const Context = require('node-execution-context');
@@ -116,12 +120,13 @@ Returns an monitoring report over the current execution map resources
 
 > Before calling `monitor`, you should `configure` execution context to monitor it's nodes. by default the data kept is as possible.
 
+#### Example
+
 ```js
 const Context = require('node-execution-context');
 
 // Startup
 Context.configure({ monitor: true });
-
 
 // Later on
 const usage = Context.monitor();
