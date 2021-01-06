@@ -1,6 +1,7 @@
 const { AsyncLocalStorage } = require('async_hooks');
 const { handleError, isUndefined } = require('../../lib');
 const { ExecutionContextErrors } = require('../../ExecutionContext/constants');
+const { DEPRECATION_MESSAGES } = require('./constants');
 
 /**
  * Check whether a given async local storage has a valid store.
@@ -49,11 +50,11 @@ class AsyncLocalStorageContext {
     }
 
     configure() {
-        console.warn('Configure is relevant only for AsyncHooks context manager, and should not be used on this current node version.'); // eslint-disable-line no-console
+        console.warn(DEPRECATION_MESSAGES.CONFIGURE); // eslint-disable-line no-console
     }
 
     monitor() {
-        console.warn('Monitoring is based over node `AsyncLocalStorage` feature and should not be monitor'); // eslint-disable-line no-console
+        console.warn(DEPRECATION_MESSAGES.MONITOR); // eslint-disable-line no-console
     }
 }
 

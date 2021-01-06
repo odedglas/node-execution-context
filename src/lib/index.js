@@ -52,10 +52,11 @@ module.exports = {
 
     /**
      * Checks if current node version supports async local storage.
+     * @param {String} version The version to check.
      * @see https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage
      * @return {Boolean}
      */
-    supportAsyncLocalStorage: () => semver.gte(process.version, '12.17.0'),
+    supportAsyncLocalStorage: (version = process.version) => semver.gte(version, '12.17.0'),
 
     /**
      * Returns a monitoring report over the "executionContext" memory usage.

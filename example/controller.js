@@ -4,39 +4,28 @@ const delay = (callback, timeout = 1000) => setTimeout(() => {
 	callback();
 }, timeout);
 
-const promise = (name) => new Promise(resolve => {
-	Context.run(() => {
-		setTimeout(() => {
-			console.log('Promise domain :', Context.get());
-			resolve();
-		}, 1000)
-	}, { name }, `domain-${name}`);
-})
-
 class UserController {
 	get(req, res) {
 
 		delay(() => {
-			console.log('Callback : ', Context.get()); // { val: true }
+			console.log('Callback1: ', Context.get()); // Callback: { val: true }
 		});
 
-		// Creates a dedicate domain context ( exclude this following chain from root context )
-		// Updates mae from domain will not effect root context.
-		delay(() => {
-			Context.create({ specific: true }, 'custom-domain');
+		// Creates another context under Timeout AsyncResource un effected/effecting from current one.
+		setTimeout(() => {
+			Context.create({ value: 'domain' });
+			console.log('Domain: ', Context.get()); // Promise: { val: 'domain' }
 
 			delay(() => {
-				console.log('Domain callback ', Context.get()) // { val: true, specific: true }
-				Context.set({ inner: true });
+				console.log('Domain Callback: ', Context.get()) // Promise: { val: 'domain' }
+			}, 3000);
+		}, 300);
 
-			}, 400);
-		}, 4000)
+		delay(() => {
+			console.log('Callback2: ', Context.get()); // Callback: { val: true }
+		}, 500);
 
-		promise('oded');
-		promise('lotem');
-
-		console.log('Final : ', Context.get())
-		res.send(Context.get());
+		res.send(Context.get()); // { val: true }
 	}
 }
 

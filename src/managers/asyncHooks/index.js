@@ -53,12 +53,6 @@ class AsyncHooksContext {
         return context;
     }
 
-    /**
-     * Creates an execution context for the current asyncId process.
-     * This will expose Context get / update at any point after.
-     * @param {*} context - The initial context to be used.
-     * @returns void
-     */
     create(context) {
         const config = this.config;
         const asyncId = asyncHooks.executionAsyncId();
@@ -80,11 +74,6 @@ class AsyncHooksContext {
         executionContextMap.set(asyncId, root);
     }
 
-    /**
-     * Runs a given function within "AsyncResource" context, this will ensure the function executed within a uniq execution context.
-     * @param {Function} fn - The function to run.
-     * @param {*} context - The initial context to expose to the function execution.
-     */
     run(fn, context) {
         const resource = new ExecutionContextResource();
 
@@ -95,10 +84,6 @@ class AsyncHooksContext {
         });
     }
 
-    /**
-     * Gets the current async process execution context.
-     * @returns {*}
-     */
     get() {
         const asyncId = asyncHooks.executionAsyncId();
 
@@ -107,11 +92,6 @@ class AsyncHooksContext {
         return this._getRootContext(asyncId).context;
     }
 
-    /**
-     * Updates the current async process context.
-     * @param {*} context - The new context to set.
-     * @returns void
-     */
     set(context) {
         const asyncId = asyncHooks.executionAsyncId();
 
@@ -123,18 +103,10 @@ class AsyncHooksContext {
         rootContext.context = context;
     }
 
-    /**
-     * Configures current execution context manager.
-     * @param {ExecutionContextConfig} config - the configuration to use.
-     */
     configure(config) {
         this.config = config;
     }
 
-    /**
-     * Monitors current execution map usage
-     * @return {ExecutionMapUsage}
-     */
     monitor() {
         if (!this.config.monitor) {
             throw new Error(ExecutionContextErrors.MONITOR_MISS_CONFIGURATION);

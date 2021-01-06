@@ -35,6 +35,26 @@ describe('Lib', () => {
         });
     });
 
+    describe('supportAsyncLocalStorage', () => {
+        describe('When node version is lower than 12.17.0', () => {
+            it.each([
+                'v6.8.0',
+                'v10.9.11',
+                'v12.16.9'
+            ])('Return false', (version) => expect(lib.supportAsyncLocalStorage(version)).toBeFalsy());
+        });
+
+        describe('When node version is greater than 12.17.0', () => {
+            describe('When node version is lower than 12.17.0', () => {
+                it.each([
+                    'v12.17.0',
+                    'v14.6.0',
+                    'v15.1.0',
+                ])('Return false', (version) => expect(lib.supportAsyncLocalStorage(version)).toBeTruthy());
+            });
+        });
+    });
+
     describe('monitorMap', () => {
         describe('AsyncHooksContext', () => {
             const Context = new AsyncHooksContext();
