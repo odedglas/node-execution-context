@@ -1,3 +1,4 @@
+const semver = require('semver');
 const ExecutionContextResource = require('./ExecutionContextResource');
 
 /**
@@ -16,23 +17,46 @@ const env = process.env.NODE_ENV || PRODUCTION;
  */
 const getDuration = (now, created) => now - created;
 
+/**
+ * Checks if current environment matches production.
+ * @param {String} environment - The current environment.
+ * @return {Boolean}
+ */
+const isProduction = (environment = env) => environment === PRODUCTION;
+
 module.exports = {
     ExecutionContextResource,
     env,
-
-    /**
-     * Checks if current environment matches production.
-     * @param {String} environment - The current environment.
-     * @return {Boolean}
-     */
-    isProduction: (environment = env) => environment === PRODUCTION,
+    isProduction,
 
     /**
      * Checks if a given value is undefined.
-     * @param {String} thing that thing to check.
+     * @param {*} input - that input to check.
      * @return {Boolean}
      */
-    isUndefined: (thing) => [null, undefined].includes(thing),
+    isUndefined: (input) => [null, undefined].includes(input),
+
+    /**
+     * Handles execution context error, throws when none production.
+     * @param {String} code - The error code to log.
+     */
+    handleError: (code) => {
+        const error = new Error(code);
+
+        if (!isProduction()) {
+            throw error;
+        }
+
+        console.error(error); // eslint-disable-line no-console
+    },
+
+    /**
+     * Checks if current node version supports async local storage.
+     * @param {String} version The version to check.
+     * @see https://nodejs.org/api/async_hooks.html#async_hooks_class_asynclocalstorage
+     * @return {Boolean}
+     */
+    supportAsyncLocalStorage: (version = process.version) => semver.gte(version, '12.17.0'),
 
     /**
      * Returns a monitoring report over the "executionContext" memory usage.

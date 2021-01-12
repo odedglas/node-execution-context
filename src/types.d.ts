@@ -1,3 +1,3 @@
 export * from './lib/types';
-export * from './hooks/types';
+export * from './managers/asyncHooks/hooks/types';
 export * from './ExecutionContext/types';

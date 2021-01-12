@@ -1,5 +1,3 @@
-const asyncHooks = require('async_hooks');
-const hooks = require('../hooks');
 const { ExecutionContextErrors } = require('./constants');
 
 describe('Context', () => {
@@ -9,70 +7,20 @@ describe('Context', () => {
         Context = new ExecutionContext();
     });
 
-    describe('Initialise node "async_hooks"', () => {
-        const spies = {
-            asyncHooksCreate: jest.spyOn(asyncHooks, 'createHook'),
-            hooksCreate: jest.spyOn(hooks, 'create')
-        };
-
-        it('Trigger "async_hooks" create', () => {
-            expect(spies.asyncHooksCreate).toHaveBeenCalled();
-        });
-
-        it('Uses context hooks create', () => {
-            expect(spies.hooksCreate).toHaveBeenCalled();
-        });
-    });
-
     describe('Api', () => {
         describe('Create', () => {
-            let lastExecutionId;
-
             it('Creates an execution context', () => {
-                Context.create();
+                const context = { val: true };
+                Context.create(context);
 
-                expect(Context.get()).toBeInstanceOf(Object);
-            });
-
-            it('Sets executionId', () => {
-                Context.create();
-
-                const { executionId } = Context.get();
-
-                lastExecutionId = executionId;
-                expect(executionId).toBeDefined();
-            });
-
-            it('Create uniq execution id each time', () => {
-                Context.create();
-
-                const { executionId } = Context.get();
-                expect(executionId === lastExecutionId).toBeFalsy();
-            });
-
-            it('Sets initial context data', (done) => {
-                Context.create({ my: 'man' });
-
-                setTimeout(() => {
-                    const { my } = Context.get();
-
-                    expect(my).toEqual('man');
-                    done();
-                }, 100);
-            });
-
-            it('Throws an error when trying to re-create context under same execution', () => {
-                Context.create();
-
-                expect(() => Context.create())
-                    .toThrow(ExecutionContextErrors.CONTEXT_ALREADY_DECLARED);
+                expect(Context.get()).toEqual(context);
             });
         });
 
         describe('Get', () => {
             it('Throws an error when context is not created', () => {
                 expect(() => Context.get())
-                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
             });
 
             describe('When context is created', () => {
@@ -85,20 +33,20 @@ describe('Context', () => {
             });
         });
 
-        describe('Update', () => {
+        describe('Set', () => {
             it('Throws an error when context is not created', () => {
                 expect(() => Context.get())
-                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXISTS);
+                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
             });
 
             describe('When context is created', () => {
-                it('Updates context', () => {
+                it('Set context', () => {
                     Context.create({ val: 'value' });
                     const context = Context.get();
 
                     expect(context.val).toEqual('value');
 
-                    Context.update({ val: false });
+                    Context.set({ val: false });
                     expect(Context.get().val).toBeFalsy();
                 });
             });
@@ -112,18 +60,10 @@ describe('Context', () => {
             beforeEach(() => {
                 execute = jest.fn();
                 spies = {
-                    contextCreate: jest.spyOn(Context, 'create'),
                     execute
                 };
 
                 Context.run(execute, initialContext);
-            });
-
-            it('Creates context under root domain', () => {
-                expect(spies.contextCreate).toHaveBeenCalledWith(
-                    initialContext,
-                    undefined
-                );
             });
 
             it('Executes given function', () => {
@@ -177,7 +117,7 @@ describe('Context', () => {
 
             setTimeout(() => {
                 expect(get()).toBeTruthy();
-                Context.update({hey: false});
+                Context.set({ hey: false });
 
                 setTimeout(() => {
                     expect(get()).toBeFalsy();
@@ -195,7 +135,7 @@ describe('Context', () => {
 
             microTask().then(() => {
                 expect(get()).toBeTruthy();
-                Context.update({hey: false});
+                Context.set({ hey: false });
 
                 microTask().then(() => {
                     expect(get()).toBeFalsy();
@@ -210,7 +150,7 @@ describe('Context', () => {
 
             process.nextTick(() => {
                 expect(get()).toBeTruthy();
-                Context.update({hey: false});
+                Context.set({ hey: false });
 
                 process.nextTick(() => {
                     expect(get()).toBeFalsy();
@@ -219,13 +159,7 @@ describe('Context', () => {
             });
         });
 
-        describe('Domains', () => {
-            it('Blocks when creation is made under the same domain', () => {
-                create();
-
-                expect(create).toThrow();
-            });
-
+        describe('Support Domains', () => {
             it('Allows to create sub domains under a root context', (done) => {
                 create();
 
@@ -233,10 +167,9 @@ describe('Context', () => {
 
                 setTimeout(() => {
                     Context.create({ some: 'where' }, 'that-domain');
-                    Context.update({ hey: false });
+                    Context.set({ hey: false });
 
                     expect(Context.get().hey).toBeFalsy();
-                    expect(Context.get().some).toEqual('where');
                 }, 500);
 
                 setTimeout(() => {
