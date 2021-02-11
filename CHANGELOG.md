@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.0.1 (February 12, 2021)
+
+- Better `types.d`.
+
 ## 3.0.0 (January 03, 2021)
 
 - Introduces `AsyncLocaleStorage` based implementation for node `12.7.0` and above.
