@@ -107,7 +107,7 @@ class AsyncHooksContext {
         const asyncId = asyncHooks.executionAsyncId();
 
         if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
-        if (!isObject(asyncId)) return handleError(ExecutionContextErrors.UPDATE_BLOCKED);
+        if (!isObject(context)) return handleError(ExecutionContextErrors.UPDATE_BLOCKED);
 
         // Update target is always the root context, ref updates will need to be channeled
         const rootContext = this._getRootContext(asyncId);
