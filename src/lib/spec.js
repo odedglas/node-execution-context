@@ -35,6 +35,21 @@ describe('Lib', () => {
         });
     });
 
+    describe('isObject', () => {
+        it.each([
+            [false, false],
+            [1, false],
+            ['', false],
+            [undefined, false],
+            [[], false],
+            [() => {}, false],
+            [class Test {}, false],
+            [{}, true],
+        ])('Returns true when given value is object (%p)', (value, expected) => {
+           expect(lib.isObject(value)).toEqual(expected);
+        });
+    });
+
     describe('supportAsyncLocalStorage', () => {
         describe('When node version is lower than 12.17.0', () => {
             it.each([

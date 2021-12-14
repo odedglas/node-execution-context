@@ -1,5 +1,3 @@
-import { ExecutionMapUsage } from '../lib/types';
-
 interface ExecutionContextNode {
     asyncId: number;
     monitor: boolean;

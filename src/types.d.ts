@@ -18,6 +18,12 @@ interface ExecutionContextAPI {
     set(context: unknown): void;
 
     /**
+     * Updates the current asynchronous execution context with a given value.
+     * @param context - The value to update.
+     */
+    update(context: Record<string, unknown>): void;
+
+    /**
      * Gets the current asynchronous execution context.
      */
     get<T>(): T;
@@ -42,7 +48,7 @@ interface ExecutionContextAPI {
      * [Note] Relevant for node v12.17.0 and below
      * @return {ExecutionMapUsage|undefined}
      */
-    monitor(): ExecutionMapUsage|undefined;
+    monitor(): ExecutionMapUsage | undefined;
 }
 
 declare const context: ExecutionContextAPI;

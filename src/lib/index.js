@@ -59,6 +59,14 @@ module.exports = {
     supportAsyncLocalStorage: (version = process.version) => semver.gte(version, '12.17.0'),
 
     /**
+     * Returns true if a given thing is an object
+     * @param value - The thing to check.
+     */
+    isObject: (value) => !!value &&
+        !Array.isArray(value) &&
+        typeof value === 'object',
+
+    /**
      * Returns a monitoring report over the "executionContext" memory usage.
      * @param {ExecutionContextMap} executionContextMap The execution map to monitor.
      * @return {ExecutionMapUsage}

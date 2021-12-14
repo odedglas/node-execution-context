@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.0.2 (February 12, 2021)
+
+- Add `update` API for ease usage in case context is a plain `object`.
+
 ## 3.0.1 (February 12, 2021)
 
 - Better `types.d`.
