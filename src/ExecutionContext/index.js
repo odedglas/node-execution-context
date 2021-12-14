@@ -32,6 +32,15 @@ class ExecutionContext {
     }
 
     /**
+     * Updates the current asynchronous execution context with a given value.
+     * @param {*} context - The new context to expose current asynchronous execution.
+     * @returns void
+     */
+    update(context) {
+        this.manager.update(context);
+    }
+
+    /**
      * Gets the current asynchronous execution context.
      * @return {*}
      */

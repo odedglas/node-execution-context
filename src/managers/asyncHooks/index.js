@@ -1,5 +1,5 @@
 const asyncHooks = require('async_hooks');
-const { monitorMap, handleError, ExecutionContextResource } = require('../../lib');
+const { monitorMap, handleError, isObject, ExecutionContextResource } = require('../../lib');
 const { create: createHooks, onChildProcessDestroy } = require('./hooks');
 const { ExecutionContextErrors } = require('../../ExecutionContext/constants');
 const { DEFAULT_CONFIG } = require('./constants');
@@ -101,6 +101,18 @@ class AsyncHooksContext {
         const rootContext = this._getRootContext(asyncId);
 
         rootContext.context = context;
+    }
+
+    update(context) {
+        const asyncId = asyncHooks.executionAsyncId();
+
+        if (!executionContextMap.has(asyncId)) return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
+        if (!isObject(context)) return handleError(ExecutionContextErrors.UPDATE_BLOCKED);
+
+        // Update target is always the root context, ref updates will need to be channeled
+        const rootContext = this._getRootContext(asyncId);
+
+        Object.assign(rootContext.context, context);
     }
 
     configure(config) {

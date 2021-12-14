@@ -1,5 +1,5 @@
 const { AsyncLocalStorage } = require('async_hooks');
-const { handleError, isUndefined } = require('../../lib');
+const { handleError, isUndefined, isObject } = require('../../lib');
 const { ExecutionContextErrors } = require('../../ExecutionContext/constants');
 const { DEPRECATION_MESSAGES } = require('./constants');
 
@@ -47,6 +47,20 @@ class AsyncLocalStorageContext {
         }
 
         this.asyncLocaleStorage.getStore().context = context;
+    }
+
+    update(context) {
+        if (!validateStore(this.asyncLocaleStorage)) {
+            return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
+        }
+
+        if (!isObject(context)) {
+            return handleError(ExecutionContextErrors.UPDATE_BLOCKED);
+        }
+
+        const current = this.asyncLocaleStorage.getStore().context;
+
+        Object.assign(current, context);
     }
 
     configure() {

@@ -52,6 +52,35 @@ describe('Context', () => {
             });
         });
 
+        describe('Update', () => {
+            it('Throws an error when context is not created', () => {
+                expect(() => Context.get())
+                    .toThrow(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
+            });
+
+            it('Throws an error when context is a pain `object`', () => {
+                Context.create({ my: 'thing' });
+
+                expect(() => Context.update('Hey'))
+                    .toThrow(ExecutionContextErrors.UPDATE_BLOCKED);
+            });
+
+            describe('When context is created', () => {
+                it('Update context', () => {
+                    Context.create({ val: 'value', other: 'o' });
+                    const context = Context.get();
+
+                    expect(context.val).toEqual('value');
+
+                    Context.update({ val: false });
+                    expect(Context.get()).toMatchObject({
+                        val: false,
+                        other: 'o'
+                    });
+                });
+            });
+        });
+
         describe('Run', () => {
             let spies;
             let execute;
