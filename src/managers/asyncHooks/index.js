@@ -84,6 +84,12 @@ class AsyncHooksContext {
         });
     }
 
+    exists() {
+        const asyncId = asyncHooks.executionAsyncId();
+
+        return executionContextMap.has(asyncId);
+    }
+
     get() {
         const asyncId = asyncHooks.executionAsyncId();
 

@@ -31,6 +31,10 @@ class AsyncLocalStorageContext {
         );
     }
 
+    exists() {
+        return validateStore(this.asyncLocaleStorage);
+    }
+
     get() {
         if (!validateStore(this.asyncLocaleStorage)) {
             return handleError(ExecutionContextErrors.CONTEXT_DOES_NOT_EXIST);
