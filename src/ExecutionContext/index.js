@@ -42,7 +42,7 @@ class ExecutionContext {
 
     /**
      * Check if the current asynchronous execution context exists.
-     * @return {*}
+     * @return {boolean}
      */
     exists() {
         return this.manager.exists();
