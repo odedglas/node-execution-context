@@ -24,6 +24,11 @@ interface ExecutionContextAPI {
     update(context: Record<string, unknown>): void;
 
     /**
+     * Checks if the current asynchronous execution context exists.
+     */
+    exists(): boolean;
+
+    /**
      * Gets the current asynchronous execution context.
      */
     get<T>(): T;

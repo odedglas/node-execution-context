@@ -17,6 +17,20 @@ describe('Context', () => {
             });
         });
 
+        describe('Exists', () => {
+            it('Returns false when context is not created', () => {
+                expect(Context.exists()).toBeFalsy();
+            });
+
+            describe('When context is exists', () => {
+                it('Returns true', () => {
+                    Context.create({ val: 'value' });
+
+                    expect(() => Context.exists()).toBeTruthy();
+                });
+            });
+        });
+
         describe('Get', () => {
             it('Throws an error when context is not created', () => {
                 expect(() => Context.get())
