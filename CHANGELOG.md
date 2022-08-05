@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.1.0 (February 12, 2021)
+
+- Add `Context.exists` API to validate context presence before accessing it.
+
 ## 3.0.2 (February 12, 2021)
 
 - Add `update` API for ease usage in case context is a plain `object`.
